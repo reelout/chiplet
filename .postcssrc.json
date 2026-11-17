@@ -1,0 +1,7 @@
+{
+  "plugins": {
+    "@tailwindcss/postcss": {},
+    "@csstools/postcss-light-dark-function": {},
+    "@csstools/postcss-relative-color-syntax": {}
+  }
+}

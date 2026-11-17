@@ -1,0 +1,12 @@
+*.pem
+*.tsbuildinfo
+.env.local
+.rollup.cache
+.vercel
+.vitest
+__screenshots__
+coverage
+dist
+node_modules
+storybook-static
+test-results

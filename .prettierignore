@@ -1,0 +1,4 @@
+.agents
+.pnpm-store
+.vercel
+pnpm-lock.yaml
