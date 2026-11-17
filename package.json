@@ -52,7 +52,7 @@
     "prepare": "husky",
     "pretest": "playwright install --with-deps",
     "test": "vitest",
-    "validate": "pnpm i && pnpm clean && pnpm lint && pnpm build && pnpm test run --coverage --passWithNoTests"
+    "validate": "pnpm i && pnpm clean && pnpm lint && pnpm build && pnpm test run --coverage"
   },
   "dependencies": {
     "@floating-ui/dom": "catalog:",
