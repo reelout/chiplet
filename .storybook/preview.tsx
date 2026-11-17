@@ -9,7 +9,16 @@ import addonLinks from '@storybook/addon-links'
 import addonThemes, { withThemeFromJSXProvider } from '@storybook/addon-themes'
 import addonVitest from '@storybook/addon-vitest'
 import { definePreview } from '@storybook/react-vite'
-import type { PropsWithChildren } from 'react'
+import {
+  DarkColorScheme,
+  GlobalContainerStyle,
+  LightColorScheme,
+  theme,
+  themeClass,
+  tokenClass,
+} from 'chiplet/theme'
+import clsx from 'clsx'
+import { useLayoutEffect, useMemo, type PropsWithChildren } from 'react'
 
 const _autoTheme = {}
 const _lightTheme = {}
@@ -36,7 +45,7 @@ const preview = definePreview({
     docs: {
       codePanel: true,
       container: (props: PropsWithChildren<DocsContainerProps>) => (
-        <div>
+        <div className={clsx(tokenClass, themeClass)}>
           <DocsContainer {...props} />
         </div>
       ),
@@ -47,6 +56,29 @@ const preview = definePreview({
       themes: { auto: _autoTheme, light: _lightTheme, dark: _darkTheme },
       defaultTheme: 'auto',
       Provider(props: PropsWithChildren<{ theme: object }>) {
+        const colorScheme = useMemo(() => {
+          switch (props.theme) {
+            case _lightTheme:
+              return LightColorScheme
+            case _darkTheme:
+              return DarkColorScheme
+            default:
+              return undefined
+          }
+        }, [props.theme])
+
+        useLayoutEffect(() => {
+          document.body.classList.add(...GlobalContainerStyle.split(' '))
+          if (colorScheme) document.body.classList.add(colorScheme)
+          document.body.style.background = theme.background
+
+          return () => {
+            document.body.classList.remove(...GlobalContainerStyle.split(' '))
+            if (colorScheme) document.body.classList.remove(colorScheme)
+            document.body.style.background = ''
+          }
+        }, [colorScheme])
+
         return props.children
       },
     }),
