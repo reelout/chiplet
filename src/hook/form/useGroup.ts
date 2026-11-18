@@ -57,15 +57,6 @@ export function useGroup<T, P extends Props<T, SyntheticEvent>>(props: P) {
     value: _value,
   })
 
-  const groupProps: P = {
-    ...props,
-    name,
-    defaultValue: undefined,
-    value,
-    multiple,
-    disabled,
-  }
-
   const [_state, _setState] = useDefault({
     defaultValue: {},
     value: context?.value,
@@ -135,7 +126,12 @@ export function useGroup<T, P extends Props<T, SyntheticEvent>>(props: P) {
   )
 
   const groupProviderProps: P = {
-    ...groupProps,
+    ...props,
+    name,
+    defaultValue: undefined,
+    value,
+    multiple,
+    disabled,
     onChange: handleChange,
     children: createElement(
       FormContext,
@@ -144,7 +140,7 @@ export function useGroup<T, P extends Props<T, SyntheticEvent>>(props: P) {
       // ref-reading function passed through a provider during render.
       // eslint-disable-next-line react-hooks/refs
       { value: _context },
-      groupProps.children
+      props.children
     ),
   }
 
