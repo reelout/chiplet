@@ -13,7 +13,7 @@ import {
 } from '@floating-ui/dom'
 import { getOppositePlacement, getSide } from '@floating-ui/utils'
 import { isEqual } from 'lodash-es'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { refValue, type RefValue } from '../react'
 import type { Position } from './style/positioning.css'
@@ -66,22 +66,14 @@ export function usePositioning(
     arrowRef?: RefValue<HTMLElement> | undefined
   }
 ): Positioning {
-  {
-    const ref = useRef(_options)
+  const [stableOptions, setStableOptions] = useState(_options)
 
-    // eslint-disable-next-line react-hooks/refs
-    if (isEqual(_options, ref.current)) {
-      // eslint-disable-next-line react-hooks/immutability, react-hooks/refs
-      _options = ref.current
-    }
-
-    useEffect(() => {
-      ref.current = _options
-    })
+  if (!isEqual(_options, stableOptions)) {
+    setStableOptions(_options)
   }
 
-  const { anchorRef, positionedRef, arrowRef } = _options
-  const options = usePositioningOptions(_options)
+  const { anchorRef, positionedRef, arrowRef } = stableOptions
+  const options = usePositioningOptions(stableOptions)
   const { position, strategy } = options
   const [state, setState] = useState<State>({ x: 0, y: 0, position, strategy })
   const ref = useRef({ state })

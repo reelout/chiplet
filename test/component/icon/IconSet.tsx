@@ -1,4 +1,5 @@
 import { Body2, SearchInput } from '#component'
+import type * as IconModule from '#component/icon/Icon'
 import * as module from '#component/icon'
 import { Keyboard, Roving, useRegExp } from '#hook'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -9,11 +10,7 @@ import {
   ListStyle,
 } from './style.css'
 
-type IconName = Exclude<
-  keyof typeof module,
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  keyof typeof import('#component/icon/Icon')
->
+type IconName = Exclude<keyof typeof module, keyof typeof IconModule>
 
 export default function IconSet() {
   const [keyword, setKeyword] = useState('')

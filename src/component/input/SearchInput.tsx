@@ -12,7 +12,7 @@ export interface SearchInputProps extends InputProps {
 }
 
 export function SearchInput(props: SearchInputProps) {
-  const { onSearch, ...attrs } = props
+  const { onSearch, onKeyDown, ...attrs } = props
 
   attrs.role ||= 'searchbox'
 
@@ -24,10 +24,7 @@ export function SearchInput(props: SearchInputProps) {
     )
   }
 
-  const { onKeyDown } = attrs
-
-  attrs.onKeyDown = useCallback<NonNullable<typeof onKeyDown>>(
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
+  const handleKeyDown = useCallback<NonNullable<typeof onKeyDown>>(
     (ev) => {
       onKeyDown?.(ev)
 
@@ -35,9 +32,8 @@ export function SearchInput(props: SearchInputProps) {
         onSearch?.(ev, ev.currentTarget.value)
       }
     },
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     [onKeyDown, onSearch]
   )
 
-  return <Input {...attrs} />
+  return <Input {...attrs} onKeyDown={handleKeyDown} />
 }

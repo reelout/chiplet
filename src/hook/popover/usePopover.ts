@@ -149,6 +149,12 @@ export function usePopover<T extends React.HTMLElementType = 'div'>(
     ref: anchorRef,
   }
 
+  keyboardProps = {
+    ...keyboardProps,
+    ref: setKeyboardRef,
+    children,
+  }
+
   positionedProps = {
     ...positionedProps,
     role: positionedProps.role || 'dialog',
@@ -160,20 +166,12 @@ export function usePopover<T extends React.HTMLElementType = 'div'>(
       ...positionedProps.style,
     },
     ref: positionedRef,
+    children: createElement(
+      OverlayContext,
+      { value: overlay },
+      createElement(Keyboard, keyboardProps)
+    ),
   }
-
-  keyboardProps = {
-    ...keyboardProps,
-    ref: setKeyboardRef,
-    children,
-  }
-
-  // eslint-disable-next-line react-hooks/refs
-  positionedProps.children = createElement(
-    OverlayContext,
-    { value: overlay },
-    createElement(Keyboard, keyboardProps)
-  )
 
   return {
     overlay,

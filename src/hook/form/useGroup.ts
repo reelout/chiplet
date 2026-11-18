@@ -57,8 +57,7 @@ export function useGroup<T, P extends Props<T, SyntheticEvent>>(props: P) {
     value: _value,
   })
 
-  // eslint-disable-next-line react-hooks/immutability, react-compiler/react-compiler
-  props = {
+  const groupProps: P = {
     ...props,
     name,
     defaultValue: undefined,
@@ -130,20 +129,23 @@ export function useGroup<T, P extends Props<T, SyntheticEvent>>(props: P) {
     [name, setState]
   )
 
-  props = {
-    ...props,
-    onChange: handleChange,
-  }
-
   const _context = useMemo<NonNullable<typeof context>>(
     () => ({ name, value: state, multiple, disabled, onChange: setState }),
     [disabled, multiple, name, setState, state]
   )
 
-  props = {
-    ...props,
-    // eslint-disable-next-line react-hooks/refs
-    children: createElement(FormContext, { value: _context }, props.children),
+  const groupProviderProps: P = {
+    ...groupProps,
+    onChange: handleChange,
+    children: createElement(
+      FormContext,
+      // The context value bundles 'setState', which reads the latest state
+      // from a ref inside event callbacks. The rule conservatively flags any
+      // ref-reading function passed through a provider during render.
+      // eslint-disable-next-line react-hooks/refs
+      { value: _context },
+      groupProps.children
+    ),
   }
 
   return {
@@ -152,7 +154,7 @@ export function useGroup<T, P extends Props<T, SyntheticEvent>>(props: P) {
     multiple,
     disabled,
     onChange: handleChange,
-    props,
+    props: groupProviderProps,
     context: _context,
   }
 }
