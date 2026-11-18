@@ -7,6 +7,9 @@
     "url": "git+https://github.com/reelout/chiplet.git"
   },
   "license": "MIT",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "type": "module",
   "imports": {
     "#.storybook/preview": "./.storybook/preview.tsx",
