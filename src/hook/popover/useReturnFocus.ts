@@ -28,8 +28,14 @@ export function useReturnFocus(overlay: Overlay) {
     }
   }, [overlay.open])
 
-  // See the file "useReturnFocus.test.tsx" for more information,
-  // the "useLayoutEffect" hook does not work here.
+  // React records the active element before its mutation phase and, at the
+  // end of that phase, moves focus back to it when focus moved elsewhere
+  // and the element is still connected. The 'useLayoutEffect' cleanup of a
+  // component deleted during the commit runs inside the mutation phase, so
+  // focus it restores is immediately moved back by React. The passive
+  // 'useEffect' cleanup runs after the commit, so its restoration survives.
+  // See the 'useReturnFocus - unmount while open' test in
+  // 'useReturnFocus.browser.test.tsx'.
   useEffect(() => {
     const anchor = ref.current.source
     const { positioned } = ref.current
