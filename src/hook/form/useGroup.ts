@@ -125,7 +125,7 @@ export function useGroup<T, P extends Props<T, SyntheticEvent>>(props: P) {
     [disabled, multiple, name, setState, state]
   )
 
-  const groupProviderProps: P = {
+  const groupProps: P = {
     ...props,
     name,
     defaultValue: undefined,
@@ -150,7 +150,7 @@ export function useGroup<T, P extends Props<T, SyntheticEvent>>(props: P) {
     multiple,
     disabled,
     onChange: handleChange,
-    props: groupProviderProps,
+    props: groupProps,
     context: _context,
   }
 }
