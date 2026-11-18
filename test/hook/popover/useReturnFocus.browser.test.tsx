@@ -1,7 +1,7 @@
 import type { Overlay } from '#hook'
 import { useOverlay, useReturnFocus } from '#hook'
 import { render, renderHook } from '@testing-library/react'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react'
 import { renderToString } from 'react-dom/server'
 import { assert, beforeEach, expect, test, vi } from 'vitest'
 import { page } from 'vitest/browser'
@@ -192,4 +192,88 @@ test('useReturnFocus - SVGElement', () => {
     1,
     expect.objectContaining({ target: anchor })
   )
+})
+
+test('useReturnFocus - unmount while open', () => {
+  const spy = vi.fn()
+
+  document.addEventListener('focusin', spy)
+
+  let open = false
+  let mounted = true
+
+  // The hook must be hosted by a component that is deleted while the
+  // overlay stays open. A fiber deleted during the commit runs its
+  // 'useLayoutEffect' cleanups inside React's mutation phase, so focus
+  // restored there is moved back by React, while its 'useEffect' cleanups
+  // run after the commit and survive. A host that survives the commit, or
+  // a cleanup triggered by closing the overlay, never reproduces the
+  // clobbering, so only this shape catches a 'useLayoutEffect' regression.
+  function HookUser({
+    positionedRef,
+  }: {
+    positionedRef: RefObject<HTMLDivElement | null>
+  }) {
+    useReturnFocus(useOverlay({ anchorRef: useRef(null), positionedRef, open }))
+
+    return null
+  }
+
+  // The focus source and the positioned element live in the surviving
+  // 'Page' instead of the deleted 'HookUser' subtree: React moves focus
+  // back only to a pre-commit active element that is still connected, so
+  // the focused 'inside' button must outlive the deletion for a clobbered
+  // 'useLayoutEffect' restoration to be observable, and the trigger must
+  // stay connected for the cleanup to focus it.
+  function Page() {
+    const positionedRef = useRef<HTMLDivElement>(null)
+
+    return (
+      <>
+        <button data-testid='trigger' />
+        {open && (
+          <div ref={positionedRef} tabIndex={-1}>
+            <button data-testid='inside' />
+          </div>
+        )}
+        {mounted && <HookUser positionedRef={positionedRef} />}
+      </>
+    )
+  }
+
+  const { getByTestId, rerender } = render(<Page />)
+
+  const trigger = getByTestId('trigger')
+
+  // Records the trigger as the focus source while the overlay is closed.
+  trigger.focus()
+
+  {
+    open = true
+    rerender(<Page />)
+
+    const inside = getByTestId('inside')
+
+    // Focus inside the positioned element arms the focus restoration.
+    inside.focus()
+
+    // Deleting 'HookUser' runs the restore effect's cleanup. Because the
+    // effect is passive, the cleanup runs after the commit, so React's
+    // mutation-phase focus restoration cannot undo the focus it moves
+    // back to the trigger. A 'useLayoutEffect' cleanup would run inside
+    // the mutation phase and React would immediately move focus back to
+    // 'inside', failing the assertions below.
+    spy.mockClear()
+    mounted = false
+    rerender(<Page />)
+  }
+
+  expect(document.activeElement).toBe(trigger)
+  expect(spy).toHaveBeenCalledTimes(1)
+  expect(spy).toHaveBeenNthCalledWith(
+    1,
+    expect.objectContaining({ target: trigger })
+  )
+
+  document.removeEventListener('focusin', spy)
 })
