@@ -103,6 +103,10 @@ function Page({ anchorStyle, positionedStyle, arrowStyle, ...options }: Props) {
       >
         <div>Positioned</div>
         {
+          // The arrow element renders only when the test passes an
+          // 'arrowRef'. Reading the ref from the rest-props object during
+          // render is intentional test wiring: 'arrowRef' must stay inside
+          // 'options' so it also reaches 'usePositioning' through the spread.
           // eslint-disable-next-line react-hooks/refs
           options.arrowRef && (
             <div
@@ -115,6 +119,8 @@ function Page({ anchorStyle, positionedStyle, arrowStyle, ...options }: Props) {
                 ...positioning.arrowStyle,
                 ...arrowStyle,
               }}
+              // The arrow ref is wired from the rest-props object for the
+              // same reason as the guard above.
               // eslint-disable-next-line react-hooks/refs
               ref={options.arrowRef}
             />

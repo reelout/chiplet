@@ -8,6 +8,12 @@ export function useLastFocused(
   tree: Tree,
   active: Element | null
 ) {
+  // The memoized context binding is deliberately reassigned: when 'active'
+  // is removed from the tree (or missing) the memo yields null or
+  // undefined, and the '??=' fallback below restores the last captured
+  // context from the ref. Reassigning the binding keeps the ref fallback
+  // out of the memo dependencies, which would otherwise propagate ref
+  // reads into every downstream memo.
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   let ctx = useMemo(
     () => (active ? tree.map.get(active)?.context : null),

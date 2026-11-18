@@ -48,7 +48,6 @@ export function useTooltip(options: TooltipOptions) {
 
   let anchorProps: OverlayAnchorProps = { ...anchor?.props }
   let positionedProps: React.JSX.IntrinsicElements[TooltipTag] = { ...props }
-  let arrowProps: React.ComponentProps<'div'>
 
   const _id = useUniqueId('tooltip-')
   positionedProps.id ||= _id
@@ -237,8 +236,7 @@ export function useTooltip(options: TooltipOptions) {
     ref: positionedRef,
   }
 
-  // eslint-disable-next-line prefer-const
-  arrowProps = {
+  const arrowProps: React.ComponentProps<'div'> = {
     style: {
       ...positioning.arrowStyle,
     },
@@ -248,6 +246,9 @@ export function useTooltip(options: TooltipOptions) {
   return {
     overlay,
     position: positioning.position,
+    // Passing the anchor ref through 'cloneElement' is the standard anchor
+    // injection pattern; the rule cannot prove the element is not a function
+    // component, so it conservatively flags the ref.
     // eslint-disable-next-line react-hooks/refs
     anchor: anchor == null ? null : cloneElement(anchor, anchorProps),
     positioned: { props: positionedProps },

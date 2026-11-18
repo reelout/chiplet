@@ -70,7 +70,10 @@ export function useReturnFocus(overlay: Overlay) {
     }
   }, [overlay.open])
 
-  // https://react.dev/link/setstate-in-render
+  // The focused element is tracked by the document-level 'focusin' listener
+  // above rather than by React state, so the latest value can only be read
+  // from the ref. Returning it during render is intentional: consumers use
+  // it to know where focus will return.
   // eslint-disable-next-line react-hooks/refs
   return ref.current.source
 }

@@ -5,7 +5,7 @@ import {
   positionTryOptionMap,
 } from '#hook/popover/style/positioning.css'
 import { render } from '@testing-library/react'
-import { act, useCallback, useState } from 'react'
+import { act, useCallback, useEffect, useState } from 'react'
 import { assert, beforeEach, expect, test } from 'vitest'
 import { page, server } from 'vitest/browser'
 
@@ -46,8 +46,11 @@ function Page({
     setPositioned((positioned = el))
   }, [])
 
-  // eslint-disable-next-line react-hooks/globals
-  const positioning = (result = useAnchorPositioning(options))
+  const positioning = useAnchorPositioning(options)
+
+  useEffect(() => {
+    result = positioning
+  })
 
   return (
     <div

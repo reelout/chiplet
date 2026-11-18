@@ -49,6 +49,8 @@ export function Checkbox(props: CheckboxProps) {
     if (ref.current) {
       // When a checkbox has both `indeterminate` and `checked` set to true,
       // only the `indeterminate` state will be activated in Chromium browser.
+      // Writing the 'indeterminate' IDL attribute mutates the value returned
+      // by the 'current' getter, which the compiler cannot prove mutable.
       // eslint-disable-next-line react-compiler/react-compiler
       ref.current.indeterminate = !ref.current.checked && !!indeterminate
     }

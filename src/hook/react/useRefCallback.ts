@@ -13,6 +13,8 @@ export function useRefCallback<T>(ref: Ref<T> | undefined) {
       if (typeof ref === 'function') {
         destroy = ref(current)
       } else if (ref) {
+        // Writing to the forwarded 'ref' argument is the purpose of this
+        // hook; the rules conservatively forbid mutating hook arguments.
         // eslint-disable-next-line react-hooks/immutability, react-compiler/react-compiler
         ref.current = current
       }

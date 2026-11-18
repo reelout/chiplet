@@ -1295,6 +1295,9 @@ function Page({ type = 'render' }: { type?: 'render' | 'effect' }) {
   })
 
   if (!open && type === 'render') {
+    // Reading the ref during render is deliberate: this branch closes the
+    // dialog imperatively while it is still mounted, exercising the case
+    // where 'useReturnFocus' cleans up after a render-phase close.
     // eslint-disable-next-line react-hooks/refs
     ref.current?.close()
   }
