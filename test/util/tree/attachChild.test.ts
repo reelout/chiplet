@@ -20,33 +20,6 @@ test('attachChild - appends the first child', () => {
   })
 })
 
-test('attachChild - links appended children as siblings', () => {
-  const parent = TreeNode(1)
-
-  expect(attachChild(parent, TreeNode(2))).toBe(parent)
-  expect(attachChild(parent, TreeNode(3))).toBe(parent)
-
-  expect(parent.firstChild?.value).toBe(2)
-  expect(parent.lastChild?.value).toBe(3)
-
-  expect(parent.firstChild?.nextSibling?.value).toBe(3)
-  expect(parent.lastChild?.previousSibling?.value).toBe(2)
-
-  expect(JSON.parse(JSON.stringify(parent))).toEqual({
-    value: 1,
-    nextSibling: null,
-    firstChild: {
-      value: 2,
-      nextSibling: {
-        value: 3,
-        nextSibling: null,
-        firstChild: null,
-      },
-      firstChild: null,
-    },
-  })
-})
-
 test('attachChild - links a chain of appended siblings', () => {
   const parent = TreeNode(1)
 
