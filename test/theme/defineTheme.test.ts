@@ -1,4 +1,4 @@
-import { defineTheme } from '#theme/defineTheme'
+import { defineTheme } from '#theme'
 import { expect, expectTypeOf, test } from 'vitest'
 
 test('defineTheme', () => {

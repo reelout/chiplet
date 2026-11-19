@@ -1,29 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
+
+const QUERY = '(prefers-color-scheme: dark)'
+
+function subscribe(onStoreChange: () => void) {
+  const query = window.matchMedia(QUERY)
+
+  query.addEventListener('change', onStoreChange)
+
+  return () => {
+    query.removeEventListener('change', onStoreChange)
+  }
+}
 
 export function useSystemColorScheme() {
-  const [query] = useState(() =>
-    typeof window !== 'undefined'
-      ? window.matchMedia('(prefers-color-scheme: dark)')
-      : null
+  return useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(QUERY).matches,
+    // Server rendering assumes the default 'light' preference so hydration
+    // matches; the client re-renders with the actual value after hydration.
+    () => false
   )
-
-  const [isDarkMode, setIsDarkMode] = useState(query?.matches)
-
-  useEffect(() => {
-    if (!query) {
-      return
-    }
-
-    const onChange = (event: MediaQueryListEvent) => {
-      setIsDarkMode(event.matches)
-    }
-
-    query.addEventListener('change', onChange)
-
-    return () => {
-      query.removeEventListener('change', onChange)
-    }
-  }, [query])
-
-  return isDarkMode ? 'dark' : 'light'
+    ? 'dark'
+    : 'light'
 }
