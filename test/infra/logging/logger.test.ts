@@ -618,10 +618,8 @@ test('logger - flushes every provider when the document becomes hidden', async (
   expect(spy2).toHaveBeenCalledTimes(0)
   expect(spy3).toHaveBeenCalledTimes(0)
 
-  // Arrange
   doc.visibilityState = 'visible'
   doc.dispatchEvent(new Event('visibilitychange'))
-  // Assert
   expect(spy1).toHaveBeenCalledTimes(0)
   expect(spy2).toHaveBeenCalledTimes(0)
   expect(spy3).toHaveBeenCalledTimes(0)
