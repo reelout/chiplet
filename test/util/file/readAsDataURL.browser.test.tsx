@@ -7,7 +7,7 @@ beforeEach(() => {
   vi.restoreAllMocks()
 })
 
-test('readAsDataURL - #1', async () => {
+test('readAsDataURL - resolves, rejects on abort, and rejects an invalid blob', async () => {
   const spy = vi.spyOn(FileReader.prototype, 'readAsDataURL')
 
   const blob = new Blob(['test'], { type: 'text/plain' })
@@ -31,7 +31,7 @@ test('readAsDataURL - #1', async () => {
   expect(spy).toHaveBeenCalledTimes(3)
 })
 
-test('readAsDataURL - #2', async () => {
+test('readAsDataURL - aborts the reader when the signal fires', async () => {
   const controller = new AbortController()
   const signal = controller.signal
 
@@ -79,7 +79,7 @@ test('readAsDataURL - #2', async () => {
   expect(reader.onload).toHaveBeenCalledTimes(0)
 })
 
-test('readAsDataURL - #3', async () => {
+test('readAsDataURL - rejects with the reader error on failure', async () => {
   const reader = new FileReader()
 
   const spy1 = vi
@@ -104,4 +104,36 @@ test('readAsDataURL - #3', async () => {
   expect(spy2).toHaveBeenCalledTimes(1)
   expect(spy2).toHaveBeenCalledWith({ type: 'foo' })
   expect(spy3).toHaveBeenCalledTimes(1)
+})
+
+test('readAsDataURL - removes the abort listener after the read settles', async () => {
+  const controller = new AbortController()
+  const signal = controller.signal
+
+  const reader = new FileReader()
+
+  const spy1 = vi
+    .spyOn(globalThis, 'FileReader')
+    .mockImplementation(function () {
+      return reader
+    })
+
+  vi.spyOn(reader, 'result', 'get').mockReturnValue(
+    'data:text/plain;base64,dGVzdA=='
+  )
+
+  const spy2 = vi.spyOn(reader, 'abort').mockReturnValue()
+
+  const promise = readAsDataURL(new Blob(), signal)
+
+  reader.onload?.({} as ProgressEvent<FileReader>)
+
+  await expect(promise).resolves.toBe('data:text/plain;base64,dGVzdA==')
+
+  // The abort listener must be removed once the read settles, so a late
+  // abort cannot reach the settled reader.
+  controller.abort()
+
+  expect(spy1).toHaveBeenCalledTimes(1)
+  expect(spy2).toHaveBeenCalledTimes(0)
 })

@@ -7,13 +7,26 @@ export function readAsDataURL(blob: Blob, signal?: AbortSignal | undefined) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
 
-    reader.onabort = () => reject(AbortError())
+    const onAbort = () => reader.abort()
 
-    reader.onerror = () => reject(reader.error)
+    const cleanup = () => signal?.removeEventListener('abort', onAbort)
 
-    reader.onload = () => resolve(reader.result as string)
+    reader.onabort = () => {
+      cleanup()
+      reject(AbortError())
+    }
 
-    signal?.addEventListener('abort', () => reader.abort(), { once: true })
+    reader.onerror = () => {
+      cleanup()
+      reject(reader.error)
+    }
+
+    reader.onload = () => {
+      cleanup()
+      resolve(reader.result as string)
+    }
+
+    signal?.addEventListener('abort', onAbort, { once: true })
 
     reader.readAsDataURL(blob)
 
