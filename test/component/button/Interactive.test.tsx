@@ -1,4 +1,4 @@
-import { Interactive } from '#component/button/Interactive'
+import { Interactive } from '#component'
 import { VirtualActive } from '#util'
 import { render } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
