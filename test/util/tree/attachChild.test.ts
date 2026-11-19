@@ -71,3 +71,20 @@ test('attachChild - resets stale sibling links on the attached child', () => {
   expect(child.previousSibling).toBe(null)
   expect(child.nextSibling).toBe(null)
 })
+
+test('attachChild - re-appends the last child without self-referential links', () => {
+  const parent = TreeNode(1)
+  const first = TreeNode(2)
+  const last = TreeNode(3)
+
+  attachChild(parent, first)
+  attachChild(parent, last)
+  attachChild(parent, last)
+
+  expect(parent.firstChild).toBe(first)
+  expect(parent.lastChild).toBe(last)
+  expect(first.nextSibling).toBe(last)
+  expect(last.previousSibling).toBe(first)
+  expect(first.previousSibling).toBe(null)
+  expect(last.nextSibling).toBe(null)
+})
