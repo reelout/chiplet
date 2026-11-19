@@ -16,15 +16,17 @@ test('LinkButton - props', () => {
   expect(button).not.toHaveAttribute('aria-disabled')
 })
 
-test('LinkButton - disabled', () => {
-  const { getByRole } = render(
+test('LinkButton - omits the href when disabled', () => {
+  const { container } = render(
     <LinkButton href='https://example.com/' disabled={true} />
   )
 
-  const button = getByRole('link')
+  // Without 'href' the anchor has no implicit 'link' role, so it cannot be
+  // queried by role.
+  const button = container.querySelector('a')
 
   expect(button).toBeInstanceOf(HTMLAnchorElement)
-  expect(button).toHaveAttribute('href', 'https://example.com/')
+  expect(button).not.toHaveAttribute('href')
   expect(button).toHaveAttribute('rel', 'noopener noreferrer')
   expect(button).toHaveAttribute('tabIndex', '-1')
   expect(button).toHaveAttribute('aria-disabled', 'true')

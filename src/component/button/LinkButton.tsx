@@ -36,7 +36,9 @@ export function LinkButton(props: LinkButtonProps) {
   return (
     <a
       {...attrs}
-      href={href}
+      // A disabled link must not navigate: 'aria-disabled' alone does not
+      // prevent activation of an anchor with an 'href'.
+      href={disabled ? undefined : href}
       className={clsx(
         ButtonStyle({ color, variant, size, shape, block }),
         LinkButtonStyle,
