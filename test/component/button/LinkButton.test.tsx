@@ -2,7 +2,7 @@ import { LinkButton } from '#component'
 import { render } from '@testing-library/react'
 import { expect, test } from 'vitest'
 
-test('LinkButton - props', () => {
+test('LinkButton - renders an enabled link with the default rel', () => {
   const { getByRole } = render(
     <LinkButton href='https://example.com/' disabled={undefined} />
   )

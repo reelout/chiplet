@@ -3,7 +3,7 @@ import { HeaderStyle, NavStyle } from '#component/header/style/index.css'
 import { render } from '@testing-library/react'
 import { expect, test } from 'vitest'
 
-test('Header - props', () => {
+test('Header - renders children and the delegated navigation', () => {
   const { getByRole } = render(
     <Header renderNav={() => <a href={location.href}>Nav Link</a>}>
       <div>Header</div>

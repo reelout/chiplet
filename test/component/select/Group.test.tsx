@@ -5,7 +5,7 @@ import { render } from '@testing-library/react'
 import { createRef } from 'react'
 import { expect, test } from 'vitest'
 
-test('Group - props', () => {
+test('Group - renders the group list item with its children', () => {
   const ref = createRef<HTMLLIElement>()
 
   function Page() {
@@ -29,7 +29,7 @@ test('Group - props', () => {
   expect(getByRole('separator')).toBeInstanceOf(HTMLLIElement)
 })
 
-test('Group - label', () => {
+test('Group - links the label through aria-labelledby', () => {
   const ref = createRef<HTMLLIElement>()
 
   const { getByText, getByRole } = render(<Group ref={ref} label={'label'} />)

@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event'
 import { act } from 'react'
 import { expect, test, vi } from 'vitest'
 
-test('SearchInput - props', async () => {
+test('SearchInput - shows the default icon unless before is null', async () => {
   const { queryByRole, rerender } = render(null)
 
   rerender(<SearchInput before={undefined} />)
@@ -19,7 +19,7 @@ test('SearchInput - props', async () => {
   expect(queryByRole('img', { hidden: true })).toBe(null)
 })
 
-test('SearchInput - onSearch', async () => {
+test('SearchInput - triggers onSearch on Enter unless the keydown is prevented', async () => {
   const onKeyDown = vi.fn()
   const onSearch = vi.fn()
 
