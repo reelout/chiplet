@@ -230,7 +230,7 @@ function renderPopoverStack() {
   return { onToggle1, onToggle2, onToggle3, onToggle4 }
 }
 
-test('useLightDismiss - open or not', async () => {
+test('useLightDismiss - dismiss only the open overlay', async () => {
   overlay1 = toOverlay({
     anchorRef: anchor1,
     positionedRef: positioned1,
@@ -252,7 +252,7 @@ test('useLightDismiss - open or not', async () => {
   expect(hide2).toHaveBeenCalledTimes(0)
 })
 
-test('useLightDismiss - missing anchor', async () => {
+test('useLightDismiss - tolerate a missing anchor', async () => {
   overlay1 = toOverlay({
     anchorRef: createRef(),
     positionedRef: positioned1,
@@ -299,7 +299,7 @@ test('useLightDismiss - missing anchor', async () => {
   expect(hide3).toHaveBeenCalledTimes(3)
 })
 
-test('useLightDismiss - click outside', async () => {
+test('useLightDismiss - dismiss on a click outside', async () => {
   render(<Page />)
 
   await act(() => document.body.click())
@@ -318,7 +318,7 @@ test('useLightDismiss - click outside', async () => {
   )
 })
 
-test('useLightDismiss - click inside anchor', async () => {
+test('useLightDismiss - keep open on its own anchor click', async () => {
   render(<Page />)
 
   await act(() => anchor1.current?.click())
@@ -340,7 +340,7 @@ test('useLightDismiss - click inside anchor', async () => {
   expect(hide3).toHaveBeenCalledTimes(2)
 })
 
-test('useLightDismiss - click inside positioned', async () => {
+test('useLightDismiss - keep open on a click inside its positioned element', async () => {
   render(<Page />)
 
   await act(() => positioned1.current?.click())
@@ -362,7 +362,7 @@ test('useLightDismiss - click inside positioned', async () => {
   expect(hide3).toHaveBeenCalledTimes(2)
 })
 
-test('useLightDismiss - escape', async () => {
+test('useLightDismiss - close the topmost overlay on escape', async () => {
   render(<Page />)
 
   await act(() => fireEvent.keyDown(document, { key: 'Enter' }))
@@ -382,7 +382,7 @@ test('useLightDismiss - escape', async () => {
   )
 })
 
-test('useLightDismiss - do not close when default prevented', async () => {
+test('useLightDismiss - do not dismiss an already-prevented escape', async () => {
   render(<Page />)
 
   await act(() =>
@@ -488,7 +488,7 @@ test('useLightDismiss - preserve the anchor keydown handler', async () => {
   expect(onToggle).toHaveBeenCalledTimes(2)
 })
 
-test('useLightDismiss - open and immediately close', async () => {
+test('useLightDismiss - abort a pending open on escape via the anchor', async () => {
   const onToggle = vi.fn()
 
   function Page() {
