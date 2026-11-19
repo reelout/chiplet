@@ -2,7 +2,7 @@ import { TreeNode } from '#util'
 import { attachChild } from '#util/tree/attachChild'
 import { expect, test } from 'vitest'
 
-test('attachChild - #1', () => {
+test('attachChild - appends the first child', () => {
   const parent = TreeNode(1)
 
   expect(attachChild(parent, TreeNode(2))).toBe(parent)
@@ -20,7 +20,7 @@ test('attachChild - #1', () => {
   })
 })
 
-test('attachChild - #2', () => {
+test('attachChild - links appended children as siblings', () => {
   const parent = TreeNode(1)
 
   expect(attachChild(parent, TreeNode(2))).toBe(parent)
@@ -47,7 +47,7 @@ test('attachChild - #2', () => {
   })
 })
 
-test('attachChild - #3', () => {
+test('attachChild - links a chain of appended siblings', () => {
   const parent = TreeNode(1)
 
   expect(attachChild(parent, TreeNode(2))).toBe(parent)
@@ -79,4 +79,22 @@ test('attachChild - #3', () => {
       firstChild: null,
     },
   })
+})
+
+test('attachChild - resets stale sibling links on the attached child', () => {
+  const parent = TreeNode(1)
+
+  const child = TreeNode(2)
+
+  // Simulate a node that is still linked into a former tree.
+  child.previousSibling = TreeNode(3)
+  child.nextSibling = TreeNode(4)
+
+  expect(attachChild(parent, child)).toBe(parent)
+
+  expect(parent.firstChild).toBe(parent.lastChild)
+  expect(parent.lastChild).toBe(child)
+  expect(child.parent).toBe(parent)
+  expect(child.previousSibling).toBe(null)
+  expect(child.nextSibling).toBe(null)
 })
