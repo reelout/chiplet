@@ -20,7 +20,7 @@ beforeEach(() => {
   buttonEl.focus()
 })
 
-test('useActivate - HTMLElement', async () => {
+test('useActivate - activates HTMLElement targets on the Enter key', async () => {
   {
     buttonEl.onclick = vi.fn()
 
@@ -128,7 +128,7 @@ test('useActivate - invokes the latest onActivate callback after a rerender', as
   expect(buttonEl.onclick).toHaveBeenCalledTimes(1)
 })
 
-test('useActivate - SVGElement', async () => {
+test('useActivate - activates SVGElement targets on the Enter key', async () => {
   {
     svgEl.onclick = vi.fn()
 
@@ -207,7 +207,7 @@ test('useActivate - SVGElement', async () => {
   }
 })
 
-test('useActivate - press Enter key', async () => {
+test('useActivate - clicks and prevents the default on Enter keydown', async () => {
   const spy = vi.spyOn(buttonEl, 'click')
 
   const { result } = renderHook(() => useActivate())
@@ -233,7 +233,7 @@ test('useActivate - press Enter key', async () => {
   expect(spy).toHaveBeenCalledTimes(1)
 })
 
-test('useActivate - press Space key', async () => {
+test('useActivate - holds the active state and clicks on Space keyup', async () => {
   const spy = vi.spyOn(buttonEl, 'click')
 
   const { result } = renderHook(() => useActivate())
@@ -259,7 +259,7 @@ test('useActivate - press Space key', async () => {
   expect(spy).toHaveBeenCalledTimes(1)
 })
 
-test('useActivate - abort when losing focus', async () => {
+test('useActivate - clears the active state when focus is lost', async () => {
   const spy = vi.spyOn(buttonEl, 'click')
 
   const { result } = renderHook(() => useActivate())
@@ -289,7 +289,7 @@ test('useActivate - abort when losing focus', async () => {
   expect(spy).toHaveBeenCalledTimes(0)
 })
 
-test('useActivate - abort when the event is not captured', async () => {
+test('useActivate - clears the active state on a stray Space keyup', async () => {
   const spy = vi.spyOn(buttonEl, 'click')
 
   const { result } = renderHook(() => useActivate())
@@ -315,7 +315,7 @@ test('useActivate - abort when the event is not captured', async () => {
   expect(spy).toHaveBeenCalledTimes(0)
 })
 
-test('useActivate - reset manually', async () => {
+test('useActivate - resets the active state manually', async () => {
   const spy = vi.spyOn(buttonEl, 'click')
 
   const { result } = renderHook(() => useActivate())
@@ -345,7 +345,7 @@ test('useActivate - reset manually', async () => {
   expect(spy).toHaveBeenCalledTimes(0)
 })
 
-test('useActivate - perform action on proxy element', async () => {
+test('useActivate - dispatches the click on the proxy target', async () => {
   const controller = document.createElement('div')
   const target = document.createElement('div')
 

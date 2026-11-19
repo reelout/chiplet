@@ -20,7 +20,7 @@ beforeAll(() => {
   vi.useFakeTimers({ shouldAdvanceTime: true })
 })
 
-test('useHighlight - props', async () => {
+test('useHighlight - highlights only with a non-empty pattern and a matching element', async () => {
   const el = createElement('div', { textContent: 'ABc12' })
   let pattern: string | undefined
   let ref: RefObject<Node> | Node | undefined
@@ -105,7 +105,7 @@ test('useHighlight - props', async () => {
   }
 })
 
-test('useHighlight - apply', async () => {
+test('useHighlight - updates the ranges as the matched content mutates', async () => {
   let pattern = 'ab'
   const el = document.createElement('div')
   const ref = { current: el }
