@@ -1,6 +1,6 @@
 import { SearchInput } from '#component'
 import { preventDefault } from '#util'
-import { render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { act } from 'react'
 import { expect, test, vi } from 'vitest'
@@ -49,5 +49,27 @@ test('SearchInput - onSearch', async () => {
   expect(onSearch).toHaveBeenCalledWith(
     expect.objectContaining({ type: 'keydown' }),
     'Hello'
+  )
+})
+
+test('SearchInput - does not trigger onSearch during IME composition', async () => {
+  const onSearch = vi.fn()
+
+  const { getByRole } = render(<SearchInput onSearch={onSearch} />)
+
+  const input = getByRole('searchbox')
+
+  // The 'Enter' keydown that confirms an in-progress IME composition must
+  // not trigger a search.
+  fireEvent.keyDown(input, { key: 'Enter', isComposing: true })
+
+  expect(onSearch).toHaveBeenCalledTimes(0)
+
+  await act(() => userEvent.type(input, '{Enter}'))
+
+  expect(onSearch).toHaveBeenCalledTimes(1)
+  expect(onSearch).toHaveBeenCalledWith(
+    expect.objectContaining({ type: 'keydown' }),
+    ''
   )
 })
