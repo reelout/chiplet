@@ -44,7 +44,7 @@ export function Switch(props: SwitchProps) {
   return (
     <div
       {...slot?.root}
-      className={clsx(SwitchStyle({ size }), className)}
+      className={clsx(SwitchStyle({ size }), slot?.root?.className, className)}
       style={style}
       ref={ref}
     >

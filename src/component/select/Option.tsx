@@ -61,7 +61,7 @@ export function Option<T extends OptionValue>(props: OptionProps<T>) {
     <li
       {...slot?.root}
       {...attrs}
-      className={clsx(ItemStyle(), attrs.className)}
+      className={clsx(ItemStyle(), slot?.root?.className, attrs.className)}
       role='option'
       value={value}
       aria-selected={selected}

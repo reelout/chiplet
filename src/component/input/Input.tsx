@@ -44,7 +44,11 @@ export function Input(props: InputProps) {
   return (
     <div
       {...slot?.root}
-      className={clsx(InputStyle({ variant, size }), className)}
+      className={clsx(
+        InputStyle({ variant, size }),
+        slot?.root?.className,
+        className
+      )}
       style={style}
     >
       {before}

@@ -30,7 +30,11 @@ export function renderMenuItem(props: MenuItemProps) {
     <li
       {...slot?.root}
       {...attrs}
-      className={clsx(ItemStyle({ danger }), attrs.className)}
+      className={clsx(
+        ItemStyle({ danger }),
+        slot?.root?.className,
+        attrs.className
+      )}
     >
       <div
         {...slot?.before}

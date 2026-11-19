@@ -20,7 +20,7 @@ export function Header(props: HeaderProps) {
     <header
       {...slot?.root}
       {...attrs}
-      className={clsx(HeaderStyle, attrs.className)}
+      className={clsx(HeaderStyle, slot?.root?.className, attrs.className)}
     >
       <nav {...slot?.nav} className={clsx(NavStyle, slot?.nav?.className)}>
         {props.renderNav()}

@@ -35,7 +35,7 @@ export function Group(props: GroupProps) {
     <li
       {...slot?.root}
       {...attrs}
-      className={clsx(GroupStyle, attrs.className)}
+      className={clsx(GroupStyle, slot?.root?.className, attrs.className)}
       role='group'
       aria-labelledby={label != null ? labelProps.id : undefined}
     >

@@ -1,5 +1,6 @@
 import { MenuItem } from '#component'
 import { Group, Separator } from '#component'
+import { GroupStyle } from '#component/select/style/index.css'
 import { render } from '@testing-library/react'
 import { createRef } from 'react'
 import { expect, test } from 'vitest'
@@ -43,4 +44,16 @@ test('Group - label', () => {
     'id',
     ref.current?.getAttribute('aria-labelledby')
   )
+})
+
+test('Group - merges the slot root class name with the base style', () => {
+  const { getByRole } = render(
+    <Group
+      label='label'
+      className='root'
+      slot={{ root: { className: 'slot-root' } }}
+    />
+  )
+
+  expect(getByRole('group')).toHaveClass(GroupStyle, 'slot-root', 'root')
 })
