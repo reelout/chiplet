@@ -157,6 +157,28 @@ test('logger', () => {
   ])
 })
 
+test('logger - serializes circular error causes', () => {
+  const error1 = new Error('Circular error 1')
+  const error2 = new Error('Circular error 2', { cause: error1 })
+
+  error1.cause = error2
+
+  logger.error('Error', error1)
+
+  expect(loggerExporter.getFinishedLogRecords()).toEqual([
+    expect.objectContaining({
+      eventName: 'Error',
+      severityText: 'ERROR',
+      body: {
+        'exception.type': 'Error',
+        'exception.message': 'Circular error 1',
+        'exception.stacktrace': expect.any(String),
+        'exception.cause': expect.stringContaining('Circular error 2'),
+      },
+    }),
+  ])
+})
+
 test('tracer', async () => {
   const spy1 = async () => {
     const span = logger.span('spy1')
