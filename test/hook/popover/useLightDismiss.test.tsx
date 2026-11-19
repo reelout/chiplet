@@ -419,7 +419,7 @@ test('useLightDismiss - do not dismiss an already-prevented escape', async () =>
   expect(hide3).toHaveBeenCalledTimes(1)
 })
 
-test('useLightDismiss - discrete', async () => {
+test('useLightDismiss - do not dismiss when the focused element and the click target differ', async () => {
   overlay3 = toOverlay({
     anchorRef: createRef(),
     positionedRef: positioned3,

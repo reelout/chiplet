@@ -24,7 +24,7 @@ function toOverlay({
   } as Parameters<typeof useOverlay>[0]
 }
 
-test('useOverlay - return value', () => {
+test('useOverlay - expose the anchor, positioned element, open state, and toggle', () => {
   const spy = vi.fn()
 
   expect(
@@ -122,7 +122,7 @@ test('useOverlay - return value', () => {
   })
 })
 
-test('useOverlay - open', () => {
+test('useOverlay - prefer a controlled open over defaultOpen and throw when control is removed', () => {
   const spy = vi.fn()
   let defaultOpen = true
   let open = false as boolean | undefined
@@ -175,7 +175,7 @@ test('useOverlay - open', () => {
   }
 })
 
-test('useOverlay - defaultOpen', () => {
+test('useOverlay - seed the open state from defaultOpen and throw when control is added', () => {
   const spy = vi.fn()
   let defaultOpen = true
   let open = undefined as boolean | undefined
@@ -228,7 +228,7 @@ test('useOverlay - defaultOpen', () => {
   }
 })
 
-test('useOverlay - toggle', async () => {
+test('useOverlay - toggle flips the open state unless vetoed', async () => {
   const spy = vi.fn().mockImplementationOnce(preventDefault)
 
   const { result } = renderHook(() =>

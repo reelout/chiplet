@@ -9,7 +9,7 @@ function toOverlay({ toggle }: { toggle: Overlay['toggle'] }) {
   return { toggle } as Partial<Overlay> as Overlay
 }
 
-test('useAnchor - click', async () => {
+test('useAnchor - toggle the overlay on an anchor click', async () => {
   const toggle = vi.fn()
   const overlay = toOverlay({ toggle })
   const ref = createRef<HTMLButtonElement>()
@@ -37,7 +37,7 @@ test('useAnchor - click', async () => {
   )
 })
 
-test('useAnchor - prevent default', async () => {
+test('useAnchor - skip the toggle when the anchor click is prevented', async () => {
   const toggle = vi.fn()
   const overlay = toOverlay({ toggle })
   const ref = createRef<HTMLButtonElement>()
@@ -60,7 +60,7 @@ test('useAnchor - prevent default', async () => {
   )
 })
 
-test('useAnchor - disabled', async () => {
+test('useAnchor - skip the toggle when the anchor is disabled', async () => {
   const toggle = vi.fn()
   const overlay = toOverlay({ toggle })
   const ref = createRef<HTMLDivElement>()
