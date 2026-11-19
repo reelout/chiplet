@@ -24,6 +24,10 @@ export function useObservable<T>(
   return useSyncExternalStore(
     useCallback(
       (onStoreChange) => {
+        // A new 'observable' must not keep reporting the previous source's
+        // last emission; fall back to 'initialValue' until it emits.
+        valueRef.current = initialValue
+
         const subscription = from(observable).subscribe((value) => {
           valueRef.current = value
           onStoreChange()
@@ -31,7 +35,7 @@ export function useObservable<T>(
 
         return () => subscription.unsubscribe()
       },
-      [observable]
+      [initialValue, observable]
     ),
     () => valueRef.current,
     () => valueRef.current
