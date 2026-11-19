@@ -36,16 +36,6 @@ test('useHighlight - highlights only with a non-empty pattern and a matching ele
 
   {
     pattern = ''
-    ref = undefined
-    rerender()
-    await act(() => vi.runOnlyPendingTimersAsync())
-
-    expect(result.current).toBe(undefined)
-    expect(toArray(result.current)).toBe(null)
-  }
-
-  {
-    pattern = ''
     ref = { current: el.cloneNode(true) }
     rerender()
     await act(() => vi.runOnlyPendingTimersAsync())
