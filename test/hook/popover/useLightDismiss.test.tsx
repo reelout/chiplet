@@ -144,7 +144,7 @@ function Page() {
   )
 }
 
-function renderOverlayStack() {
+function renderPopoverStack() {
   const onToggle1 = vi.fn()
   const onToggle2 = vi.fn()
   const onToggle3 = vi.fn()
@@ -597,7 +597,7 @@ test('useLightDismiss - do not abort a pending open on escape from elsewhere', a
   )
 })
 
-test('useLightDismiss - abort a pending open without closing the open overlays', async () => {
+test('useLightDismiss - abort a pending open without closing anything already open', async () => {
   const onToggle1 = vi.fn()
   const onToggle2 = vi.fn()
   const onToggle3 = vi.fn()
@@ -702,7 +702,7 @@ test('useLightDismiss - abort a pending open without closing the open overlays',
 })
 
 test('useLightDismiss - abort a pending open after its anchor click light-dismissed the topmost overlay', async () => {
-  const { onToggle1, onToggle2, onToggle3, onToggle4 } = renderOverlayStack()
+  const { onToggle1, onToggle2, onToggle3, onToggle4 } = renderPopoverStack()
 
   await act(() => {
     anchor1.current?.focus()
@@ -907,7 +907,7 @@ test('useLightDismiss - escape on a committed anchor closes the topmost overlay'
 })
 
 test('useLightDismiss - escape on an idle anchor closes the topmost overlay', async () => {
-  const { onToggle1, onToggle2, onToggle3, onToggle4 } = renderOverlayStack()
+  const { onToggle1, onToggle2, onToggle3, onToggle4 } = renderPopoverStack()
 
   await act(() => {
     anchor1.current?.focus()
