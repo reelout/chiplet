@@ -32,7 +32,8 @@ export function useActivate(onActivate?: ActivateCallback) {
       setIsActivated((ref.current.isActivated = false))
     }
 
-    // The 'keyup' event may not have been applied to this element.
+    // The 'keyup' may not fire on this element, so watch for it on the
+    // document.
     const handleKeyUp = (ev: KeyboardEvent) => {
       if (ref.current.isActivated && isSpaceKey(ev)) {
         setIsActivated((ref.current.isActivated = false))
