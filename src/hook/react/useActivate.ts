@@ -21,6 +21,12 @@ export function useActivate(onActivate?: ActivateCallback) {
 
   const ref = useRef({ isActivated, onActivate })
 
+  // Keep the ref in sync so 'activate' always invokes the latest
+  // 'onActivate', not the one captured when 'activate' was memoized.
+  useLayoutEffect(() => {
+    ref.current.onActivate = onActivate
+  })
+
   useLayoutEffect(() => {
     const handleBlur = (ev: FocusEvent) => {
       setIsActivated((ref.current.isActivated = false))

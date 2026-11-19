@@ -105,6 +105,29 @@ test('useActivate - HTMLElement', async () => {
   }
 })
 
+test('useActivate - invokes the latest onActivate callback after a rerender', async () => {
+  buttonEl.onclick = vi.fn()
+
+  const onActivate1 = vi.fn()
+  const onActivate2 = vi.fn()
+  let onActivate = onActivate1
+
+  const { result, rerender } = renderHook(() => useActivate(onActivate))
+
+  onActivate = onActivate2
+  rerender()
+
+  await act(() =>
+    result.current[1](
+      createEvent({ target: buttonEl, key: 'Enter', detail: 1 })
+    )
+  )
+
+  expect(onActivate1).toHaveBeenCalledTimes(0)
+  expect(onActivate2).toHaveBeenCalledTimes(1)
+  expect(buttonEl.onclick).toHaveBeenCalledTimes(1)
+})
+
 test('useActivate - SVGElement', async () => {
   {
     svgEl.onclick = vi.fn()
