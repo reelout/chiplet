@@ -7,7 +7,7 @@ beforeEach(() => {
   vi.restoreAllMocks()
 })
 
-test('readAsDataURL - resolves, rejects on abort, and rejects an invalid blob', async () => {
+test('readAsDataURL - resolves the data URL, rejects on abort, and rejects an invalid blob', async () => {
   const spy = vi.spyOn(FileReader.prototype, 'readAsDataURL')
 
   const blob = new Blob(['test'], { type: 'text/plain' })
