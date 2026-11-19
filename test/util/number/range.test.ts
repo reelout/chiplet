@@ -8,7 +8,7 @@ import type {
   Positive,
   Range,
   Subtract,
-} from '#util/number/range.d'
+} from '#util/number'
 import { expectTypeOf, test } from 'vitest'
 
 test('Range - TS', () => {
