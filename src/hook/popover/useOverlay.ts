@@ -9,6 +9,7 @@ export interface OverlayAnchorProps
   onFocus?: React.FocusEventHandler<Element> | undefined
   onBlur?: React.FocusEventHandler<Element> | undefined
   onClick?: React.MouseEventHandler<Element> | undefined
+  onKeyDown?: React.KeyboardEventHandler<Element> | undefined
   onPointerEnter?: React.PointerEventHandler<Element> | undefined
   onPointerLeave?: React.PointerEventHandler<Element> | undefined
 }
@@ -33,7 +34,7 @@ export interface Overlay<T extends HTMLElement = HTMLElement> {
     ev: Event | React.SyntheticEvent,
     open?: boolean,
     hint?: string
-  ) => void
+  ) => boolean
 }
 
 export function useOverlay<T extends HTMLElement>(options: OverlayOptions<T>) {
@@ -55,13 +56,21 @@ export function useOverlay<T extends HTMLElement>(options: OverlayOptions<T>) {
     (ev, open, hint) => {
       open ??= !ref.current
 
-      if (ref.current !== open) {
-        setOpen(ev, open, hint)
-
-        if (!ev.defaultPrevented) {
-          ref.current = open
-        }
+      if (ref.current === open) {
+        return false
       }
+
+      setOpen(ev, open, hint)
+
+      // A vetoed change (`onToggle` preventing the event) never commits in
+      // `useDefault`, so the uncommitted mirror in `ref` must not advance.
+      if (ev.defaultPrevented) {
+        return false
+      }
+
+      ref.current = open
+
+      return true
     },
     [setOpen]
   )

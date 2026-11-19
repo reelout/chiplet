@@ -339,3 +339,232 @@ test('useOverlay - toggle', async () => {
     true
   )
 })
+
+test('useOverlay - toggle returns whether the change succeeded', async () => {
+  const spy = vi.fn()
+
+  const { result } = renderHook(() =>
+    useOverlay(
+      toOverlay({
+        anchor: null,
+        positioned: null,
+        open: undefined,
+        onToggle: spy,
+      })
+    )
+  )
+
+  let opened: boolean | undefined
+  let noop: boolean | undefined
+  let closed: boolean | undefined
+
+  await act(() => {
+    opened = result.current.toggle(createEvent({ detail: 1 }))
+    noop = result.current.toggle(createEvent({ detail: 2 }), true)
+  })
+
+  expect(opened).toBe(true)
+  expect(noop).toBe(false)
+  expect(result.current.open).toBe(true)
+  expect(spy).toHaveBeenCalledTimes(1)
+
+  await act(() => {
+    closed = result.current.toggle(createEvent({ detail: 3 }))
+  })
+
+  expect(closed).toBe(true)
+  expect(result.current.open).toBe(false)
+  expect(spy).toHaveBeenCalledTimes(2)
+})
+
+test('useOverlay - toggle reports a vetoed change', async () => {
+  const spy = vi.fn().mockImplementationOnce(preventDefault)
+
+  const { result } = renderHook(() =>
+    useOverlay(
+      toOverlay({
+        anchor: null,
+        positioned: null,
+        open: undefined,
+        onToggle: spy,
+      })
+    )
+  )
+
+  let vetoed: boolean | undefined
+
+  await act(() => {
+    vetoed = result.current.toggle(createEvent({ detail: 1 }))
+  })
+
+  expect(vetoed).toBe(false)
+  expect(result.current.open).toBe(false)
+  expect(spy).toHaveBeenCalledTimes(1)
+})
+
+test('useOverlay - toggle to the committed state is a no-op while idle or committed', async () => {
+  const spy = vi.fn()
+
+  const { result } = renderHook(() =>
+    useOverlay(
+      toOverlay({
+        anchor: null,
+        positioned: null,
+        open: undefined,
+        onToggle: spy,
+      })
+    )
+  )
+
+  let idle: boolean | undefined
+  let committed: boolean | undefined
+
+  await act(() => {
+    idle = result.current.toggle(
+      createEvent({ detail: 1 }),
+      result.current.open,
+      'escape'
+    )
+  })
+
+  expect(idle).toBe(false)
+  expect(result.current.open).toBe(false)
+  expect(spy).toHaveBeenCalledTimes(0)
+
+  await act(() => result.current.toggle(createEvent({ detail: 2 })))
+
+  expect(result.current.open).toBe(true)
+
+  await act(() => {
+    committed = result.current.toggle(
+      createEvent({ detail: 3 }),
+      result.current.open,
+      'escape'
+    )
+  })
+
+  expect(committed).toBe(false)
+  expect(result.current.open).toBe(true)
+  expect(spy).toHaveBeenCalledTimes(1)
+})
+
+test('useOverlay - toggle reverts a pending open to the committed state', async () => {
+  const spy = vi.fn()
+
+  const { result } = renderHook(() =>
+    useOverlay(
+      toOverlay({
+        anchor: null,
+        positioned: null,
+        open: undefined,
+        onToggle: spy,
+      })
+    )
+  )
+
+  let reverted: boolean | undefined
+
+  await act(() => {
+    result.current.toggle(createEvent({ detail: 1 }))
+    reverted = result.current.toggle(
+      createEvent({ detail: 2 }),
+      result.current.open,
+      'escape'
+    )
+  })
+
+  expect(reverted).toBe(true)
+  expect(result.current.open).toBe(false)
+  expect(spy).toHaveBeenCalledTimes(2)
+  expect(spy).toHaveBeenNthCalledWith(
+    2,
+    expect.objectContaining({ detail: 2, defaultPrevented: false }),
+    false,
+    'escape'
+  )
+})
+
+test('useOverlay - toggle reverts a pending close to the committed state', async () => {
+  const spy = vi.fn()
+
+  const { result } = renderHook(() =>
+    useOverlay(
+      toOverlay({
+        anchor: null,
+        positioned: null,
+        open: undefined,
+        onToggle: spy,
+      })
+    )
+  )
+
+  await act(() => result.current.toggle(createEvent({ detail: 1 })))
+
+  expect(result.current.open).toBe(true)
+
+  let reverted: boolean | undefined
+
+  await act(() => {
+    result.current.toggle(createEvent({ detail: 2 }), false, 'delay')
+    reverted = result.current.toggle(
+      createEvent({ detail: 3 }),
+      result.current.open,
+      'test'
+    )
+  })
+
+  expect(reverted).toBe(true)
+  expect(result.current.open).toBe(true)
+  expect(spy).toHaveBeenCalledTimes(3)
+  expect(spy).toHaveBeenNthCalledWith(
+    2,
+    expect.objectContaining({ detail: 2, defaultPrevented: false }),
+    false,
+    'delay'
+  )
+  expect(spy).toHaveBeenNthCalledWith(
+    3,
+    expect.objectContaining({ detail: 3, defaultPrevented: false }),
+    true,
+    'test'
+  )
+})
+
+test('useOverlay - toggle reports a vetoed revert', async () => {
+  const spy = vi
+    .fn()
+    .mockImplementationOnce(() => undefined)
+    .mockImplementationOnce(preventDefault)
+
+  const { result } = renderHook(() =>
+    useOverlay(
+      toOverlay({
+        anchor: null,
+        positioned: null,
+        open: undefined,
+        onToggle: spy,
+      })
+    )
+  )
+
+  let reverted: boolean | undefined
+
+  await act(() => {
+    result.current.toggle(createEvent({ detail: 1 }))
+    reverted = result.current.toggle(
+      createEvent({ detail: 2 }),
+      result.current.open,
+      'escape'
+    )
+  })
+
+  expect(reverted).toBe(false)
+  expect(result.current.open).toBe(true)
+  expect(spy).toHaveBeenCalledTimes(2)
+  expect(spy).toHaveBeenNthCalledWith(
+    2,
+    expect.objectContaining({ detail: 2, defaultPrevented: true }),
+    false,
+    'escape'
+  )
+})

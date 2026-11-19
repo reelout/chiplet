@@ -5,7 +5,7 @@ import { render } from '@testing-library/react'
 import { act, createRef } from 'react'
 import { assert, expect, test, vi } from 'vitest'
 
-function toOverlay({ toggle }: { toggle: () => void }) {
+function toOverlay({ toggle }: { toggle: Overlay['toggle'] }) {
   return { toggle } as Partial<Overlay> as Overlay
 }
 
