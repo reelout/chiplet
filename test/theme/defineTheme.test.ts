@@ -1,7 +1,7 @@
 import { defineTheme } from '#theme'
 import { expect, expectTypeOf, test } from 'vitest'
 
-test('defineTheme', () => {
+test('defineTheme - maps the theme source to CSS custom property references', () => {
   const source = {
     a1: 1,
     a1b: '1',
@@ -36,7 +36,7 @@ test('defineTheme', () => {
   })
 })
 
-test('defineTheme - TS', () => {
+test('defineTheme - infers the token and declaration types', () => {
   const theme1 = defineTheme({
     a1: 1,
     a1b: '1',
