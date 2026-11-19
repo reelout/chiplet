@@ -177,3 +177,27 @@ test('useHighlight - apply', async () => {
     expect(toArray(result.current)).toBe(null)
   }
 })
+
+test('useHighlight - removes the highlight when mutations remove all matches', async () => {
+  const pattern = 'ab'
+  const el = document.createElement('div')
+  const ref = { current: el }
+
+  const { result } = renderHook(() => useHighlight(pattern, ref))
+
+  {
+    await act(() => (el.innerHTML = 'abc'))
+    await act(() => vi.runOnlyPendingTimersAsync())
+
+    expect(result.current).toBeInstanceOf(Highlight)
+    expect(toArray(result.current)).toEqual([['abc', 0, 'abc', 2]])
+  }
+
+  {
+    await act(() => (el.innerHTML = 'xyz'))
+    await act(() => vi.runOnlyPendingTimersAsync())
+
+    expect(result.current).toBe(undefined)
+    expect(toArray(result.current)).toBe(null)
+  }
+})
