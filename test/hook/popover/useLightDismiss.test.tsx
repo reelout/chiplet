@@ -755,6 +755,76 @@ test('useLightDismiss - abort a pending open after its anchor click light-dismis
   )
 })
 
+test('useLightDismiss - abort a pending close on escape via the anchor', async () => {
+  const onToggle = vi.fn()
+
+  function Page() {
+    const overlay = useOverlay({
+      anchorRef: anchor1,
+      positionedRef: positioned1,
+      onToggle,
+    })
+
+    const [anchorProps, positionedProps] = useLightDismiss(
+      useAnchor({ ref: anchor1 }, overlay),
+      { ref: positioned1 },
+      overlay,
+      useReturnFocus(overlay)
+    )
+
+    return (
+      <>
+        <button {...anchorProps} />
+        {overlay.open && (
+          <Portal>
+            <div {...positionedProps} />
+          </Portal>
+        )}
+      </>
+    )
+  }
+
+  render(<Page />)
+
+  await act(() => {
+    anchor1.current?.focus()
+    anchor1.current?.click()
+  })
+
+  expect(positioned1.current).not.toBe(null)
+
+  await act(() => {
+    anchor1.current?.click()
+    // `act` defers the React commit until the callback exits, so the close
+    // is still pending when the escape keydown is dispatched
+    createEvent({ target: document.activeElement, key: 'Escape' })
+  })
+
+  expect(positioned1.current).not.toBe(null)
+  expect(onToggle).toHaveBeenCalledTimes(3)
+  expect(onToggle).toHaveBeenNthCalledWith(
+    1,
+    expect.objectContaining({ type: 'click' }),
+    true,
+    'anchor'
+  )
+  expect(onToggle).toHaveBeenNthCalledWith(
+    2,
+    expect.objectContaining({ type: 'click' }),
+    false,
+    'anchor'
+  )
+  expect(onToggle).toHaveBeenNthCalledWith(
+    3,
+    expect.objectContaining({
+      key: 'Escape',
+      defaultPrevented: true,
+    }),
+    true,
+    'escape'
+  )
+})
+
 test('useLightDismiss - escape on a committed anchor closes the topmost overlay', async () => {
   const onToggle1 = vi.fn()
   const onToggle2 = vi.fn()
