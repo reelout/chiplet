@@ -103,9 +103,9 @@ export const positionTryOptionMap: Record<Position, string> = fromEntries(
 
 for (const [position, area] of entries(positionAreaMap)) {
   globalStyle(`@position-try ${positionTryOptionMap[position]}`, {
-    positionArea: area,
     inset: 'auto',
     [positionInsetMap[position]]: `var(${PositionOffset})`,
+    positionArea: area,
     // TODO: extend 'positionTryOptionMap', add '@starting-style' entry
     // animation, and try to reuse 'PopoverStyle'
   })
