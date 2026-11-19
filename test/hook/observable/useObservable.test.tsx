@@ -55,3 +55,30 @@ test('useObservable - resets to the initial value when the observable is swapped
 
   expect(result.current).toBe(2)
 })
+
+test('useObservable - keeps the emitted value when the initial value identity changes', async () => {
+  let observer: Observer<{ count: number }> | undefined
+  let subscriptions = 0
+
+  const observable = new Observable<{ count: number }>((subscriber) => {
+    observer = subscriber
+    subscriptions += 1
+  })
+
+  const { result, rerender } = renderHook(() =>
+    useObservable(observable, { count: 0 })
+  )
+
+  assert(observer)
+
+  expect(result.current).toEqual({ count: 0 })
+
+  await act(() => observer!.next({ count: 1 }))
+
+  expect(result.current).toEqual({ count: 1 })
+
+  rerender()
+
+  expect(result.current).toEqual({ count: 1 })
+  expect(subscriptions).toBe(1)
+})
