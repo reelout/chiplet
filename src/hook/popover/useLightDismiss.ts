@@ -29,6 +29,33 @@ export function useLightDismiss<
   })
 
   {
+    const { onKeyDown } = anchorProps
+
+    anchorProps = {
+      ...anchorProps,
+      onKeyDown: useCallback<NonNullable<typeof onKeyDown>>(
+        (ev) => {
+          onKeyDown?.(ev)
+
+          // A pending open or close claims the escape key to abort
+          // itself by reverting to the committed state. A committed
+          // open or an idle overlay toggles to a no-op and defers to
+          // the document listener below, which closes the topmost
+          // overlay instead.
+          if (
+            !ev.defaultPrevented &&
+            isEscapeKey(ev) &&
+            ref.current.overlay.toggle(ev, ref.current.overlay.open, 'escape')
+          ) {
+            ev.preventDefault()
+          }
+        },
+        [onKeyDown]
+      ),
+    }
+  }
+
+  {
     const { onClickCapture } = positionedProps
 
     positionedProps = {
