@@ -1,7 +1,7 @@
 'use client'
 import { createContext } from 'react'
 import type { Keyboard } from '../Keyboard'
-import type { PoolAdd, PoolRemove } from '../hook'
+import type { PoolAdd, PoolRemove } from '../hook/usePool'
 
 export interface KeyboardContext extends Keyboard {
   lastActive: Element | null
