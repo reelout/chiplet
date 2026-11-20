@@ -8,6 +8,8 @@ import {
 import { render } from '@testing-library/react'
 import { expect, test } from 'vitest'
 
+const containerClasses = GlobalContainerStyle.split(' ')
+
 test('ThemeProvider - renders a themed container', () => {
   const { getByTestId } = render(
     <ThemeProvider data-testid='theme-provider'>Content</ThemeProvider>
@@ -16,7 +18,7 @@ test('ThemeProvider - renders a themed container', () => {
   const provider = getByTestId('theme-provider')
 
   expect(provider).toBeInstanceOf(HTMLDivElement)
-  expect(provider).toHaveClass(...GlobalContainerStyle.split(' '))
+  expect(provider).toHaveClass(...containerClasses)
   expect(provider).toHaveTextContent('Content')
 })
 
@@ -52,7 +54,7 @@ test('ThemeProvider - merges consumer className and style', () => {
 
   const provider = getByTestId('theme-provider')
 
-  expect(provider).toHaveClass(...GlobalContainerStyle.split(' '))
+  expect(provider).toHaveClass(...containerClasses)
   expect(provider).toHaveClass('custom')
   expect(provider.style.padding).toBe('1rem')
 })

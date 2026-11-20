@@ -10,6 +10,8 @@ import { render } from '@testing-library/react'
 import { act, createRef } from 'react'
 import { assert, expect, test, vi } from 'vitest'
 
+const containerClasses = GlobalContainerStyle.split(' ')
+
 test('Portal - default mount point', () => {
   const ref = createRef<HTMLDivElement>()
 
@@ -79,7 +81,11 @@ test('Portal - event propagation', async () => {
 
 test('Portal - themed wrapper within ThemeProvider', () => {
   const { getByTestId } = render(
-    <ThemeProvider className='custom' data-testid='provider'>
+    <ThemeProvider
+      className='custom'
+      data-testid='provider'
+      style={{ padding: '1rem' }}
+    >
       <Portal>
         <div data-testid='content'>Content</div>
       </Portal>
@@ -94,8 +100,9 @@ test('Portal - themed wrapper within ThemeProvider', () => {
 
   expect(provider).not.toContainElement(content)
   expect(document.body).toContainElement(wrapper)
-  expect(wrapper).toHaveClass(...GlobalContainerStyle.split(' '))
+  expect(wrapper).toHaveClass(...containerClasses)
   expect(wrapper).not.toHaveClass('custom')
+  expect(wrapper.style.padding).toBe('')
 })
 
 test('Portal - themed wrapper follows the color scheme', () => {
