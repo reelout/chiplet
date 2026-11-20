@@ -1,4 +1,4 @@
-import { ThemeContext } from '#theme/ThemeContext'
+import { ThemeContext } from '#theme'
 import { use } from 'react'
 import { createPortal } from 'react-dom'
 
