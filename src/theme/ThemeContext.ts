@@ -4,7 +4,7 @@ import { createContext } from 'react'
  * @internal
  */
 export interface ThemeContext {
-  className?: string | undefined
+  className: string
 }
 
 /**
