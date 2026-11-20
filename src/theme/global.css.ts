@@ -67,30 +67,3 @@ export const SquircleStyle = style({
 export const CircleStyle = style({
   borderRadius: '100vmax',
 })
-
-declare module 'csstype' {
-  export interface StandardShorthandProperties<
-    TLength = (string & {}) | 0,
-    TTime = string & {},
-  > {
-    /**
-     * The corner-shape shorthand CSS property specifies the shape of a box's corners, within the area specified by its border-radius property value.
-     *
-     * @see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/corner-shape
-     */
-    cornerShape?: Property.CornerShape | undefined
-  }
-
-  export namespace Property {
-    export type CornerShape =
-      | Globals
-      | 'round'
-      | 'scoop'
-      | 'bevel'
-      | 'notch'
-      | 'square'
-      | 'squircle'
-      | `superellipse(${number})`
-      | (string & {})
-  }
-}
