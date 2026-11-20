@@ -22,10 +22,13 @@ test('Portal - server-side rendering within ThemeProvider', () => {
     createElement(
       ThemeProvider,
       null,
-      createElement(Portal, null, createElement('div', { ref }, 'Test'))
+      createElement('main', null, 'Test'),
+      createElement(Portal, null, createElement('div', { ref }, 'Hidden'))
     )
   )
 
-  expect(result.current).toContain(GlobalContainerStyle)
+  expect(result.current).toContain('Test')
+  expect(result.current).not.toContain('Hidden')
+  expect(result.current).not.toContain(GlobalContainerStyle)
   expect(ref.current).toBeNull()
 })

@@ -8,24 +8,18 @@ import {
 
 export type ThemeColorScheme = 'auto' | 'light' | 'dark'
 
-export interface ThemeProviderProps extends React.ComponentProps<'div'> {
+export interface ThemeProviderProps extends React.PropsWithChildren {
   colorScheme?: ThemeColorScheme | undefined
 }
 
 export function ThemeProvider(props: ThemeProviderProps) {
-  const { colorScheme = 'auto', className, style, children, ...attrs } = props
+  const { colorScheme = 'auto', children } = props
 
-  const themeClassName = clsx(
+  const className = clsx(
     GlobalContainerStyle,
     colorScheme === 'light' && LightColorScheme,
     colorScheme === 'dark' && DarkColorScheme
   )
 
-  return (
-    <div {...attrs} className={clsx(themeClassName, className)} style={style}>
-      <ThemeContext value={{ className: themeClassName }}>
-        {children}
-      </ThemeContext>
-    </div>
-  )
+  return <ThemeContext value={{ className }}>{children}</ThemeContext>
 }

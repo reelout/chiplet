@@ -81,28 +81,23 @@ test('Portal - event propagation', async () => {
 
 test('Portal - themed wrapper within ThemeProvider', () => {
   const { getByTestId } = render(
-    <ThemeProvider
-      className='custom'
-      data-testid='provider'
-      style={{ padding: '1rem' }}
-    >
-      <Portal>
-        <div data-testid='content'>Content</div>
-      </Portal>
-    </ThemeProvider>
+    <div data-testid='root'>
+      <ThemeProvider>
+        <Portal>
+          <div data-testid='content'>Content</div>
+        </Portal>
+      </ThemeProvider>
+    </div>
   )
 
-  const provider = getByTestId('provider')
   const content = getByTestId('content')
   const wrapper = content.parentElement
 
   assert(wrapper instanceof HTMLDivElement)
 
-  expect(provider).not.toContainElement(content)
+  expect(getByTestId('root')).not.toContainElement(content)
   expect(document.body).toContainElement(wrapper)
   expect(wrapper).toHaveClass(...containerClasses)
-  expect(wrapper).not.toHaveClass('custom')
-  expect(wrapper.style.padding).toBe('')
 })
 
 test('Portal - themed wrapper follows the color scheme', () => {
