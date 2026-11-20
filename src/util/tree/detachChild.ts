@@ -17,5 +17,11 @@ export function detachChild<T extends TreeNode<unknown>>(parent: T, child: T) {
     child.nextSibling.previousSibling = child.previousSibling ?? null
   }
 
+  // Detach the child's own links so it cannot reach back into the tree it
+  // was removed from.
+  child.parent = null
+  child.previousSibling = null
+  child.nextSibling = null
+
   return parent
 }

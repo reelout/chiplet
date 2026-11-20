@@ -21,12 +21,19 @@ export function useActivate(onActivate?: ActivateCallback) {
 
   const ref = useRef({ isActivated, onActivate })
 
+  // Keep the ref in sync so 'activate' always invokes the latest
+  // 'onActivate', not the one captured when 'activate' was memoized.
+  useLayoutEffect(() => {
+    ref.current.onActivate = onActivate
+  })
+
   useLayoutEffect(() => {
     const handleBlur = (ev: FocusEvent) => {
       setIsActivated((ref.current.isActivated = false))
     }
 
-    // The 'keyup' event may not have been applied to this element.
+    // The 'keyup' may not fire on this element, so watch for it on the
+    // document.
     const handleKeyUp = (ev: KeyboardEvent) => {
       if (ref.current.isActivated && isSpaceKey(ev)) {
         setIsActivated((ref.current.isActivated = false))

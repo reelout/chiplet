@@ -28,7 +28,12 @@ export function SearchInput(props: SearchInputProps) {
     (ev) => {
       onKeyDown?.(ev)
 
-      if (!ev.defaultPrevented && isEnterKey(ev)) {
+      // Ignore the 'Enter' key that confirms an in-progress IME composition.
+      if (
+        !ev.defaultPrevented &&
+        isEnterKey(ev) &&
+        !ev.nativeEvent.isComposing
+      ) {
         onSearch?.(ev, ev.currentTarget.value)
       }
     },

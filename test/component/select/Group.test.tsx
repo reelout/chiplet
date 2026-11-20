@@ -1,10 +1,11 @@
 import { MenuItem } from '#component'
 import { Group, Separator } from '#component'
+import { GroupStyle } from '#component/select/style/index.css'
 import { render } from '@testing-library/react'
 import { createRef } from 'react'
 import { expect, test } from 'vitest'
 
-test('Group - props', () => {
+test('Group - renders the group list item with its children', () => {
   const ref = createRef<HTMLLIElement>()
 
   function Page() {
@@ -28,7 +29,7 @@ test('Group - props', () => {
   expect(getByRole('separator')).toBeInstanceOf(HTMLLIElement)
 })
 
-test('Group - label', () => {
+test('Group - links the label through aria-labelledby', () => {
   const ref = createRef<HTMLLIElement>()
 
   const { getByText, getByRole } = render(<Group ref={ref} label={'label'} />)
@@ -43,4 +44,16 @@ test('Group - label', () => {
     'id',
     ref.current?.getAttribute('aria-labelledby')
   )
+})
+
+test('Group - merges the slot root class name with the base style', () => {
+  const { getByRole } = render(
+    <Group
+      label='label'
+      className='root'
+      slot={{ root: { className: 'slot-root' } }}
+    />
+  )
+
+  expect(getByRole('group')).toHaveClass(GroupStyle, 'slot-root', 'root')
 })

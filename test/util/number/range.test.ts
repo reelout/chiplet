@@ -8,10 +8,10 @@ import type {
   Positive,
   Range,
   Subtract,
-} from '#util/number/range.d'
+} from '#util/number'
 import { expectTypeOf, test } from 'vitest'
 
-test('Range - TS', () => {
+test('range - resolves the sign, arithmetic, and Range types', () => {
   expectTypeOf<Positive<0>>().toEqualTypeOf<0>()
   expectTypeOf<Positive<1>>().toEqualTypeOf<1>()
   expectTypeOf<Positive<5>>().toEqualTypeOf<5>()

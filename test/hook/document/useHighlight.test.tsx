@@ -20,7 +20,7 @@ beforeAll(() => {
   vi.useFakeTimers({ shouldAdvanceTime: true })
 })
 
-test('useHighlight - props', async () => {
+test('useHighlight - highlights only with a non-empty pattern and a matching element', async () => {
   const el = createElement('div', { textContent: 'ABc12' })
   let pattern: string | undefined
   let ref: RefObject<Node> | Node | undefined
@@ -28,16 +28,6 @@ test('useHighlight - props', async () => {
   const { result, rerender } = renderHook(() => useHighlight(pattern, ref))
 
   {
-    await act(() => vi.runOnlyPendingTimersAsync())
-
-    expect(result.current).toBe(undefined)
-    expect(toArray(result.current)).toBe(null)
-  }
-
-  {
-    pattern = ''
-    ref = undefined
-    rerender()
     await act(() => vi.runOnlyPendingTimersAsync())
 
     expect(result.current).toBe(undefined)
@@ -105,7 +95,7 @@ test('useHighlight - props', async () => {
   }
 })
 
-test('useHighlight - apply', async () => {
+test('useHighlight - updates the ranges as the matched content mutates', async () => {
   let pattern = 'ab'
   const el = document.createElement('div')
   const ref = { current: el }
@@ -174,6 +164,30 @@ test('useHighlight - apply', async () => {
     rerender()
     await act(() => vi.runOnlyPendingTimersAsync())
 
+    expect(toArray(result.current)).toBe(null)
+  }
+})
+
+test('useHighlight - removes the highlight when mutations remove all matches', async () => {
+  const pattern = 'ab'
+  const el = document.createElement('div')
+  const ref = { current: el }
+
+  const { result } = renderHook(() => useHighlight(pattern, ref))
+
+  {
+    await act(() => (el.innerHTML = 'abc'))
+    await act(() => vi.runOnlyPendingTimersAsync())
+
+    expect(result.current).toBeInstanceOf(Highlight)
+    expect(toArray(result.current)).toEqual([['abc', 0, 'abc', 2]])
+  }
+
+  {
+    await act(() => (el.innerHTML = 'xyz'))
+    await act(() => vi.runOnlyPendingTimersAsync())
+
+    expect(result.current).toBe(undefined)
     expect(toArray(result.current)).toBe(null)
   }
 })

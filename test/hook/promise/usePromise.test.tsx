@@ -4,7 +4,7 @@ import { renderHook } from '@testing-library/react'
 import { act, createElement, createRef, type PropsWithChildren } from 'react'
 import { expect, test, vi } from 'vitest'
 
-test('usePromise - #1', async () => {
+test('usePromise - resolves with the promise result', async () => {
   const promise = Promise.resolve(1)
 
   const { result } = renderHook(() => usePromise(promise))
@@ -16,7 +16,7 @@ test('usePromise - #1', async () => {
   expect(result.current).toBe(1)
 })
 
-test('usePromise - #2', async () => {
+test('usePromise - returns the initial value until the promise resolves', async () => {
   const promise = Promise.resolve(1)
 
   const { result } = renderHook(() => usePromise(promise, 0))
@@ -28,7 +28,7 @@ test('usePromise - #2', async () => {
   expect(result.current).toBe(1)
 })
 
-test('usePromise - #3', async () => {
+test('usePromise - does not subscribe when the signal is already aborted', async () => {
   const promise = Promise.resolve(1)
   const signal = AbortSignal.abort()
   const spy1 = vi.spyOn(promise, 'then')
@@ -42,10 +42,10 @@ test('usePromise - #3', async () => {
 
   expect(result.current).toBeUndefined()
   expect(spy1).toHaveBeenCalledTimes(0)
-  expect(spy2).toHaveBeenCalledTimes(2)
+  expect(spy2).toHaveBeenCalledTimes(1)
 })
 
-test('usePromise - #4', async () => {
+test('usePromise - ignores the resolved value after the signal aborts', async () => {
   const promise = Promise.resolve(1)
   const controller = new AbortController()
   const spy1 = vi.spyOn(promise, 'then')
@@ -63,10 +63,10 @@ test('usePromise - #4', async () => {
 
   expect(result.current).toBeUndefined()
   expect(spy1).toHaveBeenCalledTimes(1)
-  expect(spy2).toHaveBeenCalledTimes(3)
+  expect(spy2).toHaveBeenCalledTimes(2)
 })
 
-test('usePromise - #5', async () => {
+test('usePromise - rethrows a rejection through an effect', async () => {
   const promise = Promise.reject(new Error('Test error 0529'))
   const controller = new AbortController()
   const spy1 = vi.spyOn(promise, 'catch')
@@ -83,7 +83,7 @@ test('usePromise - #5', async () => {
   await act(async () => {})
 
   expect(spy1).toHaveBeenCalledTimes(0)
-  expect(spy2).toHaveBeenCalledTimes(4)
+  expect(spy2).toHaveBeenCalledTimes(2)
   expect(spy3).toHaveBeenCalledTimes(1)
   expect(spy3).toHaveBeenCalledWith(
     expect.objectContaining({ message: 'Test error 0529' }),
@@ -91,7 +91,7 @@ test('usePromise - #5', async () => {
   )
 })
 
-test('usePromise - #6', async () => {
+test('usePromise - does not rethrow a rejection after the signal aborts', async () => {
   const promise = Promise.reject(new Error('Test error 0529'))
   vi.spyOn(promise, 'then').mockReturnValueOnce(promise)
   const controller = new AbortController()
@@ -111,11 +111,39 @@ test('usePromise - #6', async () => {
   await act(async () => {})
 
   expect(spy1).toHaveBeenCalledTimes(1)
-  expect(spy2).toHaveBeenCalledTimes(3)
+  expect(spy2).toHaveBeenCalledTimes(2)
   expect(spy3).toHaveBeenCalledTimes(0)
 })
 
-test('usePromise - #7', async () => {
+test('usePromise - ignores the resolved value when the swapped signal is aborted', async () => {
+  let resolvePromise: (value: number) => void = () => {}
+
+  const promise = new Promise<number>((resolve) => {
+    resolvePromise = resolve
+  })
+
+  const controller1 = new AbortController()
+  const controller2 = new AbortController()
+
+  const { result, rerender } = renderHook(
+    ({ signal }) => usePromise(promise, 0, signal),
+    { initialProps: { signal: controller1.signal } }
+  )
+
+  expect(result.current).toBe(0)
+
+  rerender({ signal: controller2.signal })
+
+  controller2.abort()
+
+  await act(async () => {
+    resolvePromise(1)
+  })
+
+  expect(result.current).toBe(0)
+})
+
+test('usePromise - resolves after the error boundary resets from a transient failure', async () => {
   const promise = Promise.resolve(1)
   const spy1 = vi.spyOn(promise, 'then').mockRejectedValueOnce('Transient')
   const spy2 = vi.fn()

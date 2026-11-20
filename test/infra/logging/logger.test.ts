@@ -87,7 +87,7 @@ afterEach(async () => {
   await vi.runAllTimersAsync()
 })
 
-test('logger', () => {
+test('logger - exports a record for every severity', () => {
   logger.trace('Trace', 'Detail trace message')
   logger.debug('Debug', 'Detail debug message')
   logger.info('Info', 'Detail info message')
@@ -157,7 +157,29 @@ test('logger', () => {
   ])
 })
 
-test('tracer', async () => {
+test('logger - serializes circular error causes', () => {
+  const error1 = new Error('Circular error 1')
+  const error2 = new Error('Circular error 2', { cause: error1 })
+
+  error1.cause = error2
+
+  logger.error('Error', error1)
+
+  expect(loggerExporter.getFinishedLogRecords()).toEqual([
+    expect.objectContaining({
+      eventName: 'Error',
+      severityText: 'ERROR',
+      body: {
+        'exception.type': 'Error',
+        'exception.message': 'Circular error 1',
+        'exception.stacktrace': expect.any(String),
+        'exception.cause': expect.stringContaining('Circular error 2'),
+      },
+    }),
+  ])
+})
+
+test('tracer - records parallel spans on independent traces', async () => {
   const spy1 = async () => {
     const span = logger.span('spy1')
     await new Promise((resolve) => setTimeout(resolve, 100))
@@ -225,7 +247,7 @@ test('tracer', async () => {
   ])
 })
 
-test('tracer - nested', async () => {
+test('tracer - records nested spans with parent contexts', async () => {
   const spy1 = logger.span('spy1', async () => {
     await new Promise((resolve) => setTimeout(resolve, 100))
   })
@@ -331,7 +353,7 @@ test('tracer - nested', async () => {
   ])
 })
 
-test('meter', async () => {
+test('meter - records the latest value per name and unit', async () => {
   logger.metric('metric1', 10)
   logger.metric('metric1', 11)
   logger.metric('metric1', 12).record(13).record(14)
@@ -393,7 +415,7 @@ test('meter', async () => {
   ])
 })
 
-test('logger - exporter', () => {
+test('logger - attaches the configured attributes and resource to records', () => {
   logger.info('TestLogger1')
 
   expect(loggerExporter.getFinishedLogRecords()).toHaveLength(1)
@@ -426,7 +448,7 @@ test('logger - exporter', () => {
   ])
 })
 
-test('tracer - exporter', () => {
+test('tracer - attaches the configured attributes and resource to spans', () => {
   logger.span('Test span 1').end()
 
   expect(tracerExporter.getFinishedSpans()).toHaveLength(1)
@@ -459,7 +481,7 @@ test('tracer - exporter', () => {
   ])
 })
 
-test('meter - exporter', async () => {
+test('meter - attaches the configured attributes and resource to metrics', async () => {
   logger.metric('metric1', 10)
 
   expect(meterExporter.getMetrics()).toHaveLength(0)
@@ -510,7 +532,7 @@ test('meter - exporter', async () => {
   ])
 })
 
-test('collector', async () => {
+test('collector - exports every signal to the configured collector', async () => {
   await logger.dispose()
 
   using spy1 = vi.spyOn(OTLPLogExporter.prototype, 'export').mockReturnValue()
@@ -538,7 +560,7 @@ test('collector', async () => {
   expect(spy3).toHaveBeenCalledTimes(1)
 })
 
-test('console', async () => {
+test('console - wires the console exporters when debug is enabled', async () => {
   await logger.dispose()
 
   using spy1 = vi.spyOn(ConsoleLogRecordExporter.prototype, 'export')
@@ -579,7 +601,7 @@ test('console', async () => {
   )
 })
 
-test('auto flush on document hidden', async () => {
+test('logger - flushes every provider when the document becomes hidden', async () => {
   await logger.dispose()
 
   using spy1 = vi.spyOn(LoggerProvider.prototype, 'forceFlush')
@@ -596,11 +618,8 @@ test('auto flush on document hidden', async () => {
   expect(spy2).toHaveBeenCalledTimes(0)
   expect(spy3).toHaveBeenCalledTimes(0)
 
-  // Arrange
   doc.visibilityState = 'visible'
-  // Act
   doc.dispatchEvent(new Event('visibilitychange'))
-  // Assert
   expect(spy1).toHaveBeenCalledTimes(0)
   expect(spy2).toHaveBeenCalledTimes(0)
   expect(spy3).toHaveBeenCalledTimes(0)

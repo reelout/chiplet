@@ -59,7 +59,11 @@ export function Checkbox(props: CheckboxProps) {
   return (
     <div
       {...slot?.root}
-      className={clsx(CheckboxStyle({ size }), className)}
+      className={clsx(
+        CheckboxStyle({ size }),
+        slot?.root?.className,
+        className
+      )}
       style={style}
     >
       <input

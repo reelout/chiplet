@@ -5,7 +5,7 @@ import {
   getOppositePlacement,
 } from '@floating-ui/utils'
 import { useMemo } from 'react'
-import { useUniqueId } from '../react'
+import { useUniqueId } from '../react/useUniqueId'
 import {
   placementMap,
   positionAreaMap,

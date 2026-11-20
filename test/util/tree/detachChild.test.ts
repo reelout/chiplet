@@ -20,7 +20,7 @@ function isContainedBy(child: number, parent: number | null): boolean {
   }
 }
 
-test('detachChild - #1', () => {
+test('detachChild - removes the only child', () => {
   const parent = buildTree([2, 1].map(TreeNode), isContainedBy)
 
   assert(parent)
@@ -45,7 +45,7 @@ test('detachChild - #1', () => {
   })
 })
 
-test('detachChild - #2', () => {
+test('detachChild - removes the first of two children', () => {
   const parent = buildTree([3, 2, 1].map(TreeNode), isContainedBy)
 
   assert(parent)
@@ -78,7 +78,7 @@ test('detachChild - #2', () => {
   })
 })
 
-test('detachChild - #3', () => {
+test('detachChild - relinks siblings when removing middle children', () => {
   const parent = buildTree([6, 5, 4, 3, 2, 1].map(TreeNode), isContainedBy)
 
   assert(parent)
@@ -141,4 +141,22 @@ test('detachChild - #3', () => {
       firstChild: null,
     },
   })
+})
+
+test('detachChild - clears the detached child links', () => {
+  const parent = buildTree([3, 2, 1].map(TreeNode), isContainedBy)
+
+  assert(parent)
+
+  const child = parent.firstChild?.nextSibling
+
+  assert(child)
+
+  expect(detachChild(parent, child)).toBe(parent)
+
+  expect(parent.firstChild?.value).toBe(3)
+  expect(parent.lastChild).toBe(parent.firstChild)
+  expect(child.parent).toBe(null)
+  expect(child.previousSibling).toBe(null)
+  expect(child.nextSibling).toBe(null)
 })

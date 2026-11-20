@@ -1,6 +1,7 @@
 'use client'
 import { useCallback, useLayoutEffect, useState } from 'react'
-import { refValue, useRegExp, type RefValue } from '../react'
+import { refValue, type RefValue } from '../react/refValue'
+import { useRegExp } from '../react/useRegExp'
 
 export function useHighlight(
   pattern: string | undefined,
@@ -37,9 +38,9 @@ export function useHighlight(
 
       traverse(el)
 
-      if (highlight.size > 0) {
-        setHighlight(highlight)
-      }
+      // Report an empty result as 'undefined' so a stale 'Highlight' with
+      // detached ranges is not kept around when the matches disappear.
+      setHighlight(highlight.size > 0 ? highlight : undefined)
     },
     [RE]
   )

@@ -1,11 +1,11 @@
-import { Interactive } from '#component/button/Interactive'
+import { Interactive } from '#component'
 import { VirtualActive } from '#util'
 import { render } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { act, createRef } from 'react'
 import { expect, test, vi } from 'vitest'
 
-test('Interactive - props', async () => {
+test('Interactive - reflects the disabled state in tabIndex and aria-disabled', async () => {
   const ref = createRef<HTMLDivElement>()
 
   const { rerender } = render(<Interactive ref={ref} />)
@@ -30,7 +30,7 @@ test('Interactive - props', async () => {
   expect(ref.current).not.toHaveAttribute('disabled')
 })
 
-test('Interactive - elementType', async () => {
+test('Interactive - renders the configured elementType', async () => {
   const { getByTestId } = render(
     <>
       <Interactive data-testid='button' />
@@ -42,7 +42,7 @@ test('Interactive - elementType', async () => {
   expect(getByTestId('item')).toBeInstanceOf(HTMLLIElement)
 })
 
-test('Interactive - click', async () => {
+test('Interactive - fires onClick without key events on a mouse click', async () => {
   const user = userEvent.setup()
   const onClick = vi.fn()
   const onKeyDown = vi.fn()
@@ -68,7 +68,7 @@ test('Interactive - click', async () => {
   expect(onKeyUp).toHaveBeenCalledTimes(0)
 })
 
-test('Interactive - press Enter key', async () => {
+test('Interactive - fires onClick on Enter keydown', async () => {
   const user = userEvent.setup()
   const onClick = vi.fn()
   const onKeyDown = vi.fn()
@@ -103,7 +103,7 @@ test('Interactive - press Enter key', async () => {
   expect(onKeyUp).toHaveBeenCalledTimes(1)
 })
 
-test('Interactive - press Space key', async () => {
+test('Interactive - holds the active state and fires onClick on Space keyup', async () => {
   const user = userEvent.setup()
   const onClick = vi.fn()
   const onKeyDown = vi.fn()

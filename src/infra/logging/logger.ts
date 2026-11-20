@@ -336,7 +336,10 @@ class Logger {
     )
   }
 
-  private parseError(error: unknown): LogAttributes | undefined {
+  private parseError(
+    error: unknown,
+    seen: Set<unknown> = new Set()
+  ): LogAttributes | undefined {
     if (typeof error === 'string') {
       return {
         [ATTR_EXCEPTION_MESSAGE]: error,
@@ -344,7 +347,14 @@ class Logger {
     }
 
     if (isError(error)) {
-      const cause = this.parseError(error.cause)
+      // Guard against circular 'cause' chains, which would otherwise recurse
+      // until the stack overflows.
+      let cause: LogAttributes | undefined
+
+      if (!seen.has(error)) {
+        seen.add(error)
+        cause = this.parseError(error.cause, seen)
+      }
 
       return {
         [ATTR_EXCEPTION_TYPE]: error.name,
