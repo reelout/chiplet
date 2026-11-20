@@ -2,6 +2,7 @@ import { Portal } from '#component'
 import { createKeyboardEvent as createEvent } from '#test'
 import {
   DarkColorScheme,
+  DarkLightColorScheme,
   GlobalContainerStyle,
   LightColorScheme,
   ThemeProvider,
@@ -107,6 +108,7 @@ test('Portal - wraps portaled content in the active theme scope', () => {
   expect(getComputedStyle(wrapper).display).toBe('contents')
   expect(wrapper).not.toHaveClass(LightColorScheme)
   expect(wrapper).not.toHaveClass(DarkColorScheme)
+  expect(wrapper).not.toHaveClass(DarkLightColorScheme)
 })
 
 test('Portal - themed wrapper follows the color scheme', () => {
@@ -134,6 +136,32 @@ test('Portal - themed wrapper follows the color scheme', () => {
   expect(wrapper).toHaveClass(LightColorScheme)
   expect(wrapper).not.toHaveClass(DarkColorScheme)
   expect(getComputedStyle(wrapper).colorScheme).toBe('light')
+
+  rerender(
+    <ThemeProvider colorScheme='light dark'>
+      <Portal>
+        <div data-testid='content'>Content</div>
+      </Portal>
+    </ThemeProvider>
+  )
+
+  expect(wrapper).not.toHaveClass(LightColorScheme)
+  expect(wrapper).not.toHaveClass(DarkColorScheme)
+  expect(wrapper).not.toHaveClass(DarkLightColorScheme)
+  expect(getComputedStyle(wrapper).colorScheme).toBe('light dark')
+
+  rerender(
+    <ThemeProvider colorScheme='dark light'>
+      <Portal>
+        <div data-testid='content'>Content</div>
+      </Portal>
+    </ThemeProvider>
+  )
+
+  expect(wrapper).toHaveClass(DarkLightColorScheme)
+  expect(wrapper).not.toHaveClass(DarkColorScheme)
+  expect(wrapper).not.toHaveClass(LightColorScheme)
+  expect(getComputedStyle(wrapper).colorScheme).toBe('dark light')
 })
 
 test('Portal - themed wrapper resolves theme colors for portaled content', () => {

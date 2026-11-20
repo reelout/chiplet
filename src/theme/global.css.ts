@@ -37,7 +37,10 @@ export const GlobalContainerStyle = style([
     font: theme.body2,
     WebkitFontSmoothing: 'antialiased',
     color: theme.color,
-    colorScheme: 'light dark', // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/light-dark
+    // Enables 'light-dark()' in the theme tokens; 'light-dark()' resolves only
+    // with an explicit 'color-scheme'.
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/light-dark
+    colorScheme: 'light dark',
     background: theme.paper.background,
   },
 ])
@@ -52,6 +55,10 @@ export const LightColorScheme = style({
 
 export const DarkColorScheme = style({
   colorScheme: 'dark',
+})
+
+export const DarkLightColorScheme = style({
+  colorScheme: 'dark light',
 })
 
 export const SquircleStyle = style({
