@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.0](https://github.com/reelout/chiplet/compare/v0.4.0...v0.5.0) (2026-11-20)
+
+### Features
+
+- **hook:** abort a pending 'useOverlay' transition on escape via 'toggle' ([#5](https://github.com/reelout/chiplet/issues/5)) ([eb93413](https://github.com/reelout/chiplet/commit/eb93413174ddcf2cf20817e565f10f196cfd7965))
+
+### Bug Fixes
+
+- resolve the full-repo review findings ([#6](https://github.com/reelout/chiplet/issues/6)) ([6c54bec](https://github.com/reelout/chiplet/commit/6c54bec22b962423573060dea869354241d93acc))
+
 ## 0.4.0 (2026-11-18)
 
 ### Features
