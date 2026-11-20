@@ -104,6 +104,9 @@ test('Portal - wraps portaled content in the active theme scope', () => {
   expect(getByTestId('root')).not.toContainElement(content)
   expect(document.body).toContainElement(wrapper)
   expect(wrapper).toHaveClass(...containerClasses)
+  expect(getComputedStyle(wrapper).display).toBe('contents')
+  expect(wrapper).not.toHaveClass(LightColorScheme)
+  expect(wrapper).not.toHaveClass(DarkColorScheme)
 })
 
 test('Portal - themed wrapper follows the color scheme', () => {
