@@ -1,8 +1,14 @@
 import { Portal } from '#component'
 import { createKeyboardEvent as createEvent } from '#test'
+import {
+  DarkColorScheme,
+  GlobalContainerStyle,
+  LightColorScheme,
+  ThemeProvider,
+} from '#theme'
 import { render } from '@testing-library/react'
 import { act, createRef } from 'react'
-import { expect, test, vi } from 'vitest'
+import { assert, expect, test, vi } from 'vitest'
 
 test('Portal - default mount point', () => {
   const ref = createRef<HTMLDivElement>()
@@ -69,4 +75,98 @@ test('Portal - event propagation', async () => {
       target: ref2.current,
     })
   )
+})
+
+test('Portal - themed wrapper within ThemeProvider', () => {
+  const { getByTestId } = render(
+    <ThemeProvider className='custom' data-testid='provider'>
+      <Portal>
+        <div data-testid='content'>Content</div>
+      </Portal>
+    </ThemeProvider>
+  )
+
+  const provider = getByTestId('provider')
+  const content = getByTestId('content')
+  const wrapper = content.parentElement
+
+  assert(wrapper instanceof HTMLDivElement)
+
+  expect(provider).not.toContainElement(content)
+  expect(document.body).toContainElement(wrapper)
+  expect(wrapper).toHaveClass(...GlobalContainerStyle.split(' '))
+  expect(wrapper).not.toHaveClass('custom')
+})
+
+test('Portal - themed wrapper follows the color scheme', () => {
+  const { rerender, getByTestId } = render(
+    <ThemeProvider colorScheme='dark'>
+      <Portal>
+        <div data-testid='content'>Content</div>
+      </Portal>
+    </ThemeProvider>
+  )
+
+  const wrapper = getByTestId('content').parentElement
+
+  assert(wrapper instanceof HTMLDivElement)
+
+  expect(wrapper).toHaveClass(DarkColorScheme)
+  expect(getComputedStyle(wrapper).colorScheme).toBe('dark')
+
+  rerender(
+    <ThemeProvider colorScheme='light'>
+      <Portal>
+        <div data-testid='content'>Content</div>
+      </Portal>
+    </ThemeProvider>
+  )
+
+  expect(wrapper).toHaveClass(LightColorScheme)
+  expect(wrapper).not.toHaveClass(DarkColorScheme)
+  expect(getComputedStyle(wrapper).colorScheme).toBe('light')
+})
+
+test('Portal - themed wrapper resolves theme colors for portaled content', () => {
+  const { getByTestId } = render(
+    <>
+      <ThemeProvider colorScheme='light'>
+        <Portal>
+          <div data-testid='light'>Content</div>
+        </Portal>
+      </ThemeProvider>
+      <ThemeProvider colorScheme='dark'>
+        <Portal>
+          <div data-testid='dark'>Content</div>
+        </Portal>
+      </ThemeProvider>
+    </>
+  )
+
+  const light = getByTestId('light').parentElement
+  const dark = getByTestId('dark').parentElement
+
+  assert(light instanceof HTMLDivElement)
+  assert(dark instanceof HTMLDivElement)
+
+  expect(getComputedStyle(light).color).not.toBe(getComputedStyle(dark).color)
+})
+
+test('Portal - nested ThemeProviders scope to the innermost provider', () => {
+  const { getByTestId } = render(
+    <ThemeProvider colorScheme='light'>
+      <ThemeProvider colorScheme='dark'>
+        <Portal>
+          <div data-testid='content'>Content</div>
+        </Portal>
+      </ThemeProvider>
+    </ThemeProvider>
+  )
+
+  const wrapper = getByTestId('content').parentElement
+
+  assert(wrapper instanceof HTMLDivElement)
+
+  expect(wrapper).toHaveClass(DarkColorScheme)
+  expect(wrapper).not.toHaveClass(LightColorScheme)
 })
