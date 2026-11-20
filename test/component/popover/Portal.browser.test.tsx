@@ -12,6 +12,14 @@ import { assert, expect, test, vi } from 'vitest'
 
 const containerClasses = GlobalContainerStyle.split(' ')
 
+function getThemedWrapper(content: HTMLElement) {
+  const wrapper = content.parentElement
+
+  assert(wrapper instanceof HTMLDivElement)
+
+  return wrapper
+}
+
 test('Portal - default mount point', () => {
   const ref = createRef<HTMLDivElement>()
 
@@ -91,9 +99,7 @@ test('Portal - wraps portaled content in the active theme scope', () => {
   )
 
   const content = getByTestId('content')
-  const wrapper = content.parentElement
-
-  assert(wrapper instanceof HTMLDivElement)
+  const wrapper = getThemedWrapper(content)
 
   expect(getByTestId('root')).not.toContainElement(content)
   expect(document.body).toContainElement(wrapper)
@@ -109,9 +115,7 @@ test('Portal - themed wrapper follows the color scheme', () => {
     </ThemeProvider>
   )
 
-  const wrapper = getByTestId('content').parentElement
-
-  assert(wrapper instanceof HTMLDivElement)
+  const wrapper = getThemedWrapper(getByTestId('content'))
 
   expect(wrapper).toHaveClass(DarkColorScheme)
   expect(getComputedStyle(wrapper).colorScheme).toBe('dark')
@@ -145,11 +149,8 @@ test('Portal - themed wrapper resolves theme colors for portaled content', () =>
     </>
   )
 
-  const light = getByTestId('light').parentElement
-  const dark = getByTestId('dark').parentElement
-
-  assert(light instanceof HTMLDivElement)
-  assert(dark instanceof HTMLDivElement)
+  const light = getThemedWrapper(getByTestId('light'))
+  const dark = getThemedWrapper(getByTestId('dark'))
 
   expect(getComputedStyle(light).color).not.toBe(getComputedStyle(dark).color)
 })
@@ -165,9 +166,7 @@ test('Portal - nested ThemeProviders scope to the innermost provider', () => {
     </ThemeProvider>
   )
 
-  const wrapper = getByTestId('content').parentElement
-
-  assert(wrapper instanceof HTMLDivElement)
+  const wrapper = getThemedWrapper(getByTestId('content'))
 
   expect(wrapper).toHaveClass(DarkColorScheme)
   expect(wrapper).not.toHaveClass(LightColorScheme)
