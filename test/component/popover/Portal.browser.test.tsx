@@ -79,7 +79,7 @@ test('Portal - event propagation', async () => {
   )
 })
 
-test('Portal - themed wrapper within ThemeProvider', () => {
+test('Portal - wraps portaled content in the active theme scope', () => {
   const { getByTestId } = render(
     <div data-testid='root'>
       <ThemeProvider>
