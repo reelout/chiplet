@@ -29,7 +29,7 @@ Chiplet is an ESM library of React components, hooks, utilities, and theming too
 
 ## Installation
 
-Chiplet requires **Node.js 24.15 or later** and **React 19**. It declares `react`, `react-dom`, `@vanilla-extract/css`, and `tslib` as peer dependencies.
+Chiplet requires **Node.js 24.15 or later** and **React 19**. It declares `react`, `react-dom`, and `@vanilla-extract/css` as peer dependencies.
 
 ```sh
 pnpm add chiplet
