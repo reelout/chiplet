@@ -1,9 +1,3 @@
-// Both React Compiler implementations key this hook's effect callback on
-// 'signal?.aborted' instead of the 'signal' identity, so swapping one
-// un-aborted signal for another reuses a stale closure that ignores the new
-// signal's abort. Opt out of compilation until that is fixed upstream.
-'use no memo'
-
 import { useEffect, useState } from 'react'
 
 export function usePromise<T>(

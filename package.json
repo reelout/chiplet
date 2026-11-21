@@ -83,8 +83,6 @@
     "tiny-invariant": "catalog:"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-jsx": "catalog:",
-    "@babel/plugin-syntax-typescript": "catalog:",
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",
     "@csstools/postcss-light-dark-function": "catalog:",
@@ -128,7 +126,6 @@
     "husky": "catalog:",
     "jsdom": "catalog:",
     "lint-staged": "catalog:",
-    "oxc-transform-react": "catalog:",
     "playwright": "catalog:",
     "postcss": "catalog:",
     "postcss-styled-syntax": "catalog:",
