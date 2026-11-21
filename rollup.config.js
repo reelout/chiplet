@@ -20,7 +20,6 @@ export default defineConfig({
     nodeResolve(),
     commonjs(),
     babel({
-      configFile: true,
       babelHelpers: 'bundled',
       extensions: ['.ts', '.tsx'],
     }),
