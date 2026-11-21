@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.0](https://github.com/reelout/chiplet/compare/v0.5.0...v0.6.0) (2026-11-21)
+
+### Features
+
+- **theme:** add 'ThemeProvider' and a themed wrapper in 'Portal' ([#9](https://github.com/reelout/chiplet/issues/9)) ([8657251](https://github.com/reelout/chiplet/commit/8657251f2001fad99daae25e55133fa56c304287))
+
+### Bug Fixes
+
+- **theme:** apply the 'dark light' scheme and complete the scheme class family ([#10](https://github.com/reelout/chiplet/issues/10)) ([3ae25a4](https://github.com/reelout/chiplet/commit/3ae25a4bccfef21d83120a26a7035bdd2af1c168))
+
 ## [0.5.0](https://github.com/reelout/chiplet/compare/v0.4.0...v0.5.0) (2026-11-20)
 
 ### Features
