@@ -71,7 +71,6 @@ export default defineConfig([
   {
     rules: {
       'react/jsx-boolean-value': ['error', 'always'],
-      'react/no-unknown-property': ['error', { ignore: ['css'] }],
     },
     settings: {
       'react': { version: '19' },

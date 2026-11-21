@@ -8,12 +8,10 @@ on:
     branches:
       - main
 permissions:
-  contents: write
-  packages: write
+  contents: read
   issues: write
   pull-requests: write
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 jobs:
   test:
@@ -27,7 +25,5 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
         shell: bash
-        env:
-          NODE_AUTH_TOKEN: ${{ env.GITHUB_TOKEN }}
       - run: pnpm validate
       - uses: codecov/codecov-action@v7

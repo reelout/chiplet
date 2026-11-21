@@ -4,17 +4,8 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  plugins: [
-    react({ babel: { configFile: true } }),
-    vanillaExtractPlugin(),
-    svgr({ dimensions: false }),
-  ],
+  plugins: [react(), vanillaExtractPlugin(), svgr({ dimensions: false })],
   optimizeDeps: {
-    include: [
-      '@vanilla-extract/recipes/createRuntimeFn',
-      'clsx',
-      'colorjs.io',
-      'react/jsx-dev-runtime',
-    ],
+    include: ['@vanilla-extract/recipes/createRuntimeFn', 'clsx', 'colorjs.io'],
   },
 })

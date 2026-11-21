@@ -6,22 +6,10 @@
   ],
   "overrides": [
     {
-      "files": ["*.scss"],
-      "customSyntax": "postcss-scss"
-    },
-    {
       "files": ["*.{js,jsx,ts,tsx}"],
       "customSyntax": "postcss-styled-syntax",
       "rules": {
         "nesting-selector-no-missing-scoping-root": null,
-        "no-invalid-position-declaration": null
-      }
-    },
-    {
-      "files": ["*.{html,vue}"],
-      "customSyntax": "postcss-html",
-      "rules": {
-        "custom-property-empty-line-before": null,
         "no-invalid-position-declaration": null
       }
     }
