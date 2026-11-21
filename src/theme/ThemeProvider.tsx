@@ -3,6 +3,7 @@ import type { ColorScheme } from './ColorScheme'
 import { ThemeContext } from './ThemeContext'
 import {
   DarkColorScheme,
+  DarkLightColorScheme,
   GlobalContainerStyle,
   LightColorScheme,
 } from './global.css'
@@ -17,7 +18,8 @@ export function ThemeProvider(props: ThemeProviderProps) {
   const className = clsx(
     GlobalContainerStyle,
     colorScheme === 'light' && LightColorScheme,
-    colorScheme === 'dark' && DarkColorScheme
+    colorScheme === 'dark' && DarkColorScheme,
+    colorScheme === 'dark light' && DarkLightColorScheme
   )
 
   return <ThemeContext value={{ className }}>{children}</ThemeContext>
