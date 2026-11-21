@@ -2,7 +2,7 @@ import { LightDarkColorScheme } from '#theme'
 import { render } from '@testing-library/react'
 import { expect, test } from 'vitest'
 
-test("LightDarkColorScheme - opts into the scheme without 'GlobalContainerStyle'", () => {
+test("LightDarkColorScheme - opts into the 'light dark' scheme without 'GlobalContainerStyle'", () => {
   const { getByTestId } = render(
     <>
       <div data-testid='plain' />

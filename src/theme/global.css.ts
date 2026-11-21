@@ -37,8 +37,8 @@ export const GlobalContainerStyle = style([
     font: theme.body2,
     WebkitFontSmoothing: 'antialiased',
     color: theme.color,
-    // Enables 'light-dark()' in the theme tokens; 'light-dark()' resolves only
-    // with an explicit 'color-scheme'.
+    // Enables 'light-dark()' in the theme tokens; it resolves only with an
+    // explicit 'color-scheme'.
     // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/light-dark
     colorScheme: 'light dark',
     background: theme.paper.background,
@@ -56,6 +56,9 @@ export const LightColorScheme = style({
 export const DarkColorScheme = style({
   colorScheme: 'dark',
 })
+
+// Standalone 'light dark' opt-in for containers that do not carry
+// 'GlobalContainerStyle'.
 
 export const LightDarkColorScheme = style({
   colorScheme: 'light dark',
