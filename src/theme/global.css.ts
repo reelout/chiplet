@@ -59,7 +59,6 @@ export const DarkColorScheme = style({
 
 // Standalone 'light dark' opt-in for containers that do not carry
 // 'GlobalContainerStyle'.
-
 export const LightDarkColorScheme = style({
   colorScheme: 'light dark',
 })
