@@ -57,6 +57,10 @@ export const DarkColorScheme = style({
   colorScheme: 'dark',
 })
 
+export const LightDarkColorScheme = style({
+  colorScheme: 'light dark',
+})
+
 export const DarkLightColorScheme = style({
   colorScheme: 'dark light',
 })
