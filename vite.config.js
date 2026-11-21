@@ -94,7 +94,12 @@ export default defineConfig({
     ],
   },
   optimizeDeps: {
-    include: ['@vanilla-extract/recipes/createRuntimeFn', 'clsx', 'colorjs.io'],
+    include: [
+      '@vanilla-extract/recipes/createRuntimeFn',
+      'clsx',
+      'colorjs.io',
+      'react/jsx-dev-runtime',
+    ],
     rolldownOptions: {
       experimental: {
         chunkOptimization: false,
