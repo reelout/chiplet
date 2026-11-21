@@ -22,7 +22,7 @@ export default defineConfig({
     babel({
       configFile: true,
       babelHelpers: 'bundled',
-      extensions: ['.js', '.jsx', '.es6', '.es', '.mjs', '.cjs', '.ts', '.tsx'],
+      extensions: ['.ts', '.tsx'],
     }),
     esbuild(),
     vanillaExtractPlugin({ identifiers: 'short' }),
