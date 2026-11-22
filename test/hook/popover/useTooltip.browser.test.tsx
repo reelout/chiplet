@@ -85,10 +85,11 @@ function refValue<T>(ref: Ref<T> | undefined) {
   return ref.current
 }
 
-// The browser test environment schedules its own timers, so only count the
-// close-delay timers that belong to the tooltip.
+// The default `delay` of 'useTooltip'.
 const CLOSE_DELAY = 200
 
+// The browser runner schedules its own timers, so count only the tooltip's
+// close-delay timers rather than every 'setTimeout' call.
 function scheduledCloseTimers(
   setTimeoutSpy: MockInstance<typeof globalThis.setTimeout>
 ) {
@@ -117,8 +118,9 @@ function cancelledCloseTimers(
 }
 
 async function settlePositioning() {
-  // The real positioning pipeline re-arms fake timers and animation frames
-  // across several rounds before the final position lands; drain generously.
+  // A single 'runOnlyPendingTimersAsync' flush can return before the layout
+  // effect has re-armed the follow-up positioning pass, so drain the
+  // fake-timer queue over several rounds until the position lands.
   for (let i = 0; i < 10; i += 1) {
     await act(() => vi.runOnlyPendingTimersAsync())
   }
@@ -415,7 +417,7 @@ test('useTooltip - ref', () => {
   })
 })
 
-test('useTooltip - close and cancel closing progress', async () => {
+test('useTooltip - unmount with a pending close', async () => {
   const spy1 = vi.spyOn(globalThis, 'setTimeout')
   const spy2 = vi.spyOn(globalThis, 'clearTimeout')
   const result = createRef<ReturnType<typeof useTooltip>>()

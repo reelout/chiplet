@@ -3,7 +3,6 @@ import { afterEach, beforeEach } from 'vitest'
 
 const stopTrustedPointerEvent = (ev: Event) => {
   if (ev.isTrusted) {
-    ev.stopPropagation()
     ev.stopImmediatePropagation()
   }
 }
@@ -15,18 +14,18 @@ const trustedPointerEventTypes = [
   'pointerover',
 ]
 
-// The browser-runner frame can receive real pointer input while the machine
-// is under load, and in Chromium for Linux focusing an element also fires a
+// Real pointer input can reach the browser-runner frame while the machine is
+// under load — in Chromium for Linux, focusing an element even fires a
 // trusted pointerenter on it. React never listens for native pointerenter or
-// pointerleave: it derives both from trusted pointerover and pointerout
-// (react-dom registers "onPointerEnter" and "onPointerLeave" with the
-// ["pointerout", "pointerover"] direct-event types). Any of these four
-// trusted events can therefore flip the hovered state of a popover hook
-// mid-test and make the test flake under load. Capture-phase listeners on
-// `document` run before React's root-container listeners, and
-// `stopImmediatePropagation` keeps the trusted events away from React
-// entirely. Synthetic `fireEvent` events have isTrusted=false and pass
-// through untouched.
+// pointerleave: it derives both from pointerover and pointerout (react-dom
+// registers "onPointerEnter" and "onPointerLeave" against the
+// ["pointerout", "pointerover"] direct-event types), so a stray trusted
+// pointerover or pointerout flips the hovered state of a popover hook
+// mid-test and flakes the suite under load. Stopping the trusted enter/leave
+// family at document capture keeps it from React's root-container listeners
+// and from any native listener alike; synthetic `fireEvent` events keep
+// isTrusted === false and pass through untouched.
+
 beforeEach(() => {
   for (const type of trustedPointerEventTypes) {
     document.addEventListener(type, stopTrustedPointerEvent, true)
