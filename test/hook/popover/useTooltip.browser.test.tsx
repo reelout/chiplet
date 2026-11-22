@@ -92,6 +92,35 @@ function wait(ms: number) {
   })
 }
 
+function settleCloseDelay() {
+  // Waits out the close delay (see CLOSE_DELAY) inside an act scope,
+  // so a pending close also flushes before the caller asserts.
+  return act(() => wait(CLOSE_DELAY + 100))
+}
+
+// The real positioning pipeline commits through 'flushSync', which
+// force-flushes even while an act scope is open, so the settled style
+// can be polled mid-act.
+function waitForPositionedStyle(
+  tooltip: ReturnType<typeof useTooltip>,
+  translate: string
+) {
+  return act(() =>
+    vi.waitFor(
+      () => {
+        expect(tooltip.positioned.props.style).toEqual({
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          translate,
+          willChange: 'translate',
+        })
+      },
+      { timeout: 5000 }
+    )
+  )
+}
+
 let lastFocusedElement: HTMLElement | null = null
 let lastHoveredElement: HTMLElement | null = null
 
@@ -457,7 +486,7 @@ test('useTooltip - close and cancel closing progress', async () => {
 
   unmount()
 
-  await act(() => wait(CLOSE_DELAY + 100))
+  await settleCloseDelay()
 
   expect(result.current?.overlay.open).toBe(true)
   expect(onToggle).toHaveBeenCalledTimes(0)
@@ -549,7 +578,7 @@ test('useTooltip - delay to close', async () => {
   expect(result.current?.overlay.open).toBe(true)
   expect(onToggle).toHaveBeenCalledTimes(0)
 
-  await act(() => wait(CLOSE_DELAY + 100))
+  await settleCloseDelay()
 
   expect(result.current?.overlay.open).toBe(false)
   expect(onToggle).toHaveBeenCalledTimes(1)
@@ -661,7 +690,7 @@ test('useTooltip - focus and blur', { timeout: 60_000 }, async () => {
     expect(container1.current).toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(0)
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(0)
@@ -674,7 +703,7 @@ test('useTooltip - focus and blur', { timeout: 60_000 }, async () => {
 
     expect(container1.current).toBeVisible()
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).not.toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(1)
@@ -690,7 +719,7 @@ test('useTooltip - focus and blur', { timeout: 60_000 }, async () => {
     await act(() => focus(trigger1.current))
     await act(() => focus(link1.current))
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(1)
@@ -735,7 +764,7 @@ test('useTooltip - hover and unhover', { timeout: 60_000 }, async () => {
     expect(container1.current).toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(0)
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(0)
@@ -748,7 +777,7 @@ test('useTooltip - hover and unhover', { timeout: 60_000 }, async () => {
 
     expect(container1.current).toBeVisible()
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).not.toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(1)
@@ -767,7 +796,7 @@ test('useTooltip - hover and unhover', { timeout: 60_000 }, async () => {
     await act(() => hover(trigger1.current))
     await act(() => hover(container1.current))
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(1)
@@ -807,7 +836,7 @@ test('useTooltip - focus next anchor', { timeout: 60_000 }, async () => {
 
     expect(container2.current).toBeVisible()
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).not.toBeVisible()
     expect(container2.current).toBeVisible()
@@ -854,7 +883,7 @@ test('useTooltip - stay open', { timeout: 60_000 }, async () => {
 
   expect(container1.current).toBeVisible()
 
-  await act(() => wait(CLOSE_DELAY + 100))
+  await settleCloseDelay()
 
   expect(container1.current).toBeVisible()
   expect(onToggle1).toHaveBeenCalledTimes(1)
@@ -876,7 +905,7 @@ test('useTooltip - focus and hover', { timeout: 60_000 }, async () => {
     await act(() => hover(trigger1.current))
     await act(() => hover(trigger3.current))
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).not.toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(2)
@@ -901,7 +930,7 @@ test('useTooltip - focus and hover', { timeout: 60_000 }, async () => {
     await act(() => focus(trigger1.current))
     await act(() => focus(trigger3.current))
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).not.toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(2)
@@ -926,7 +955,7 @@ test('useTooltip - focus and hover', { timeout: 60_000 }, async () => {
     await act(() => focus(trigger3.current))
     await act(() => hover(trigger3.current))
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).not.toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(2)
@@ -954,7 +983,7 @@ test('useTooltip - focus and hover', { timeout: 60_000 }, async () => {
     await act(() => hover(trigger3.current))
     await act(() => focus(trigger3.current))
 
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(container1.current).not.toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(2)
@@ -1037,20 +1066,7 @@ test('useTooltip - positioning - position', { timeout: 60_000 }, async () => {
   {
     await act(() => focus(trigger1.current))
 
-    await act(() =>
-      vi.waitFor(
-        () => {
-          expect(tooltip1.positioned.props.style).toEqual({
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            translate: '80px 116px',
-            willChange: 'translate',
-          })
-        },
-        { timeout: 5000 }
-      )
-    )
+    await waitForPositionedStyle(tooltip1, '80px 116px')
 
     expect(tooltip1.position).toBe('above')
     expect(tooltip1.anchor?.props.style).toEqual({})
@@ -1063,27 +1079,9 @@ test('useTooltip - positioning - position', { timeout: 60_000 }, async () => {
   {
     await act(() => focus(trigger2.current))
 
-    // The real positioning pipeline commits through 'flushSync', which
-    // force-flushes even while the act scope is open.
-    await act(() =>
-      vi.waitFor(
-        () => {
-          expect(tooltip2.positioned.props.style).toEqual({
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            translate: '160px 348px',
-            willChange: 'translate',
-          })
-        },
-        { timeout: 5000 }
-      )
-    )
+    await waitForPositionedStyle(tooltip2, '160px 348px')
 
-    // The delayed close of tooltip1 is timer-driven: React flushes it
-    // only when the surrounding act scope settles, so settle it with a
-    // real wait before asserting.
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(tooltip1.position).toBe('above')
     expect(tooltip1.anchor?.props.style).toEqual({})
@@ -1102,20 +1100,7 @@ test('useTooltip - positioning - anchor', { timeout: 60_000 }, async () => {
   {
     await act(() => focus(trigger1.current))
 
-    await act(() =>
-      vi.waitFor(
-        () => {
-          expect(tooltip1.positioned.props.style).toEqual({
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            translate: '80px 116px',
-            willChange: 'translate',
-          })
-        },
-        { timeout: 5000 }
-      )
-    )
+    await waitForPositionedStyle(tooltip1, '80px 116px')
 
     expect(tooltip1.position).toBe('above')
     expect(tooltip1.anchor?.props.style).toEqual({})
@@ -1127,27 +1112,9 @@ test('useTooltip - positioning - anchor', { timeout: 60_000 }, async () => {
   {
     await act(() => focus(trigger2.current))
 
-    // The real positioning pipeline commits through 'flushSync', which
-    // force-flushes even while the act scope is open.
-    await act(() =>
-      vi.waitFor(
-        () => {
-          expect(tooltip2.positioned.props.style).toEqual({
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            translate: '80px 116px',
-            willChange: 'translate',
-          })
-        },
-        { timeout: 5000 }
-      )
-    )
+    await waitForPositionedStyle(tooltip2, '80px 116px')
 
-    // The delayed close of tooltip1 is timer-driven: React flushes it
-    // only when the surrounding act scope settles, so settle it with a
-    // real wait before asserting.
-    await act(() => wait(CLOSE_DELAY + 100))
+    await settleCloseDelay()
 
     expect(tooltip1.position).toBe('above')
     expect(tooltip1.anchor?.props.style).toEqual({})
