@@ -84,21 +84,73 @@ function refValue<T>(ref: Ref<T> | undefined) {
   return ref.current
 }
 
+// The browser test environment schedules its own timers, so only count the
+// close-delay timers that belong to the tooltip.
+const CLOSE_DELAY = 200
+
+function scheduledCloseTimers(
+  setTimeoutSpy: MockInstance<typeof globalThis.setTimeout>
+) {
+  return setTimeoutSpy.mock.calls
+    .map((call, index) =>
+      call[1] === CLOSE_DELAY
+        ? setTimeoutSpy.mock.results[index]?.value
+        : undefined
+    )
+    .filter(
+      (handle): handle is NonNullable<typeof handle> => handle !== undefined
+    )
+}
+
+function cancelledCloseTimers(
+  setTimeoutSpy: MockInstance<typeof globalThis.setTimeout>,
+  clearTimeoutSpy: MockInstance<typeof globalThis.clearTimeout>
+) {
+  const scheduledHandles = scheduledCloseTimers(setTimeoutSpy)
+
+  return clearTimeoutSpy.mock.calls
+    .map((call) => call[0])
+    .filter((handle) =>
+      scheduledHandles.some((scheduledHandle) => scheduledHandle === handle)
+    )
+}
+
+async function settlePositioning() {
+  for (let i = 0; i < 10; i += 1) {
+    await act(() => vi.runOnlyPendingTimersAsync())
+  }
+}
+
 {
-  const onPointerEnter = (ev: PointerEvent) => {
+  // Trusted pointer input can reach this frame while the browser runner is
+  // under load, and in Chromium for Linux focusing an element also fires a
+  // trusted pointerenter on it. React derives onPointerEnter/onPointerLeave
+  // from trusted pointerover/pointerout, so any of these can spuriously
+  // toggle the hovered state mid-test. Synthetic fireEvent events have
+  // isTrusted=false and stay untouched.
+  const stopTrustedPointerEvent = (ev: Event) => {
     if (ev.isTrusted) {
-      // Edge case: In Chromium for Linux, focusing on an element will also trigger a pointerenter event on that element.
       ev.stopPropagation()
       ev.stopImmediatePropagation()
     }
   }
+  const trustedPointerEventTypes = [
+    'pointerenter',
+    'pointerleave',
+    'pointerout',
+    'pointerover',
+  ]
 
   beforeEach(() => {
-    document.addEventListener('pointerenter', onPointerEnter, true)
+    for (const type of trustedPointerEventTypes) {
+      document.addEventListener(type, stopTrustedPointerEvent, true)
+    }
   })
 
   afterEach(() => {
-    document.removeEventListener('pointerenter', onPointerEnter, true)
+    for (const type of trustedPointerEventTypes) {
+      document.removeEventListener(type, stopTrustedPointerEvent, true)
+    }
   })
 }
 
@@ -472,9 +524,9 @@ test('useTooltip - close and cancel closing progress', async () => {
 
   await act(() => fireEvent.focusOut(anchor))
 
-  expect(spy1).toHaveBeenCalledTimes(1)
-  expect(spy1).toHaveBeenCalledWith(expect.any(Function), 200)
-  expect(spy2).toHaveBeenCalledTimes(0)
+  expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+  expect(spy1).toHaveBeenCalledWith(expect.any(Function), CLOSE_DELAY)
+  expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
   expect(onToggle).toHaveBeenCalledTimes(0)
 
   unmount()
@@ -482,8 +534,8 @@ test('useTooltip - close and cancel closing progress', async () => {
   await act(() => vi.runOnlyPendingTimersAsync())
 
   expect(result.current?.overlay.open).toBe(true)
-  expect(spy1).toHaveBeenCalledTimes(1)
-  expect(spy2).toHaveBeenCalledTimes(0)
+  expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+  expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
   expect(onToggle).toHaveBeenCalledTimes(0)
 })
 
@@ -573,15 +625,15 @@ test('useTooltip - delay to close', async () => {
   await act(() => fireEvent.focusOut(anchor))
 
   expect(onToggle).toHaveBeenCalledTimes(0)
-  expect(spy1).toHaveBeenCalledTimes(1)
-  expect(spy1).toHaveBeenCalledWith(expect.any(Function), 200)
-  expect(spy2).toHaveBeenCalledTimes(0)
+  expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+  expect(spy1).toHaveBeenCalledWith(expect.any(Function), CLOSE_DELAY)
+  expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
 
   await act(() => vi.runOnlyPendingTimersAsync())
 
   expect(result.current?.overlay.open).toBe(false)
-  expect(spy1).toHaveBeenCalledTimes(1)
-  expect(spy2).toHaveBeenCalledTimes(0)
+  expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+  expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
   expect(onToggle).toHaveBeenCalledTimes(1)
   expect(onToggle).toHaveBeenCalledWith(
     expect.objectContaining({ type: 'blur', target: anchor }),
@@ -697,9 +749,10 @@ test('useTooltip - focus and blur', { timeout: 60_000 }, async () => {
 
     expect(container1.current).toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(0)
-    expect(spy1).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledWith(spy1.mock.results[0]?.value)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+    expect(cancelledCloseTimers(spy1, spy2)).toEqual([
+      scheduledCloseTimers(spy1)[0],
+    ])
   }
 
   {
@@ -719,8 +772,8 @@ test('useTooltip - focus and blur', { timeout: 60_000 }, async () => {
       expect.objectContaining({ type: 'blur', target: trigger1.current }),
       false
     )
-    expect(spy1).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledTimes(0)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+    expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
   }
 
   {
@@ -738,9 +791,10 @@ test('useTooltip - focus and blur', { timeout: 60_000 }, async () => {
       expect.objectContaining({ type: 'focus', target: trigger1.current }),
       true
     )
-    expect(spy1).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledWith(spy1.mock.results[0]?.value)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+    expect(cancelledCloseTimers(spy1, spy2)).toEqual([
+      scheduledCloseTimers(spy1)[0],
+    ])
   }
 })
 
@@ -784,9 +838,10 @@ test('useTooltip - hover and unhover', { timeout: 60_000 }, async () => {
 
     expect(container1.current).toBeVisible()
     expect(onToggle1).toHaveBeenCalledTimes(0)
-    expect(spy1).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledWith(spy1.mock.results[0]?.value)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+    expect(cancelledCloseTimers(spy1, spy2)).toEqual([
+      scheduledCloseTimers(spy1)[0],
+    ])
   }
 
   {
@@ -809,8 +864,8 @@ test('useTooltip - hover and unhover', { timeout: 60_000 }, async () => {
       }),
       false
     )
-    expect(spy1).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledTimes(0)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+    expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
   }
 
   {
@@ -831,9 +886,10 @@ test('useTooltip - hover and unhover', { timeout: 60_000 }, async () => {
       }),
       true
     )
-    expect(spy1).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledWith(spy1.mock.results[0]?.value)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+    expect(cancelledCloseTimers(spy1, spy2)).toEqual([
+      scheduledCloseTimers(spy1)[0],
+    ])
   }
 })
 
@@ -880,8 +936,8 @@ test('useTooltip - focus next anchor', { timeout: 60_000 }, async () => {
     )
   }
 
-  expect(spy1).toHaveBeenCalledTimes(1)
-  expect(spy2).toHaveBeenCalledTimes(0)
+  expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+  expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
 })
 
 test('useTooltip - stay open', { timeout: 60_000 }, async () => {
@@ -922,8 +978,8 @@ test('useTooltip - stay open', { timeout: 60_000 }, async () => {
   await act(() => vi.runOnlyPendingTimersAsync())
 
   expect(container1.current).toBeVisible()
-  expect(spy1).toHaveBeenCalledTimes(0)
-  expect(spy2).toHaveBeenCalledTimes(0)
+  expect(scheduledCloseTimers(spy1)).toHaveLength(0)
+  expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
   expect(onToggle1).toHaveBeenCalledTimes(1)
   expect(onToggle1).toHaveBeenCalledWith(
     expect.objectContaining({ type: 'focus', target: trigger1.current }),
@@ -948,9 +1004,10 @@ test('useTooltip - focus and hover', { timeout: 60_000 }, async () => {
     await act(() => vi.runOnlyPendingTimersAsync())
 
     expect(container1.current).not.toBeVisible()
-    expect(spy1).toHaveBeenCalledTimes(2)
-    expect(spy2).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledWith(spy1.mock.results[0]?.value)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(2)
+    expect(cancelledCloseTimers(spy1, spy2)).toEqual([
+      scheduledCloseTimers(spy1)[0],
+    ])
     expect(onToggle1).toHaveBeenCalledTimes(2)
     expect(onToggle1).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'focus', target: trigger1.current }),
@@ -975,9 +1032,10 @@ test('useTooltip - focus and hover', { timeout: 60_000 }, async () => {
     await act(() => vi.runOnlyPendingTimersAsync())
 
     expect(container1.current).not.toBeVisible()
-    expect(spy1).toHaveBeenCalledTimes(2)
-    expect(spy2).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledWith(spy1.mock.results[0]?.value)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(2)
+    expect(cancelledCloseTimers(spy1, spy2)).toEqual([
+      scheduledCloseTimers(spy1)[0],
+    ])
     expect(onToggle1).toHaveBeenCalledTimes(2)
     expect(onToggle1).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -1002,8 +1060,8 @@ test('useTooltip - focus and hover', { timeout: 60_000 }, async () => {
     await act(() => vi.runOnlyPendingTimersAsync())
 
     expect(container1.current).not.toBeVisible()
-    expect(spy1).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledTimes(0)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+    expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
     expect(onToggle1).toHaveBeenCalledTimes(2)
     expect(onToggle1).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -1031,8 +1089,8 @@ test('useTooltip - focus and hover', { timeout: 60_000 }, async () => {
     await act(() => vi.runOnlyPendingTimersAsync())
 
     expect(container1.current).not.toBeVisible()
-    expect(spy1).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledTimes(0)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+    expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
     expect(onToggle1).toHaveBeenCalledTimes(2)
     expect(onToggle1).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'focus', target: trigger1.current }),
@@ -1061,8 +1119,8 @@ test('useTooltip - focus and escape', { timeout: 60_000 }, async () => {
     await act(() => fireEvent.keyDown(document, { key: 'Escape' }))
 
     expect(container1.current).not.toBeVisible()
-    expect(spy1).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledTimes(0)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+    expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
     expect(onToggle1).toHaveBeenCalledTimes(2)
     expect(onToggle1).toHaveBeenNthCalledWith(
       1,
@@ -1094,8 +1152,8 @@ test('useTooltip - hover and escape', { timeout: 60_000 }, async () => {
     await act(() => fireEvent.keyDown(document, { key: 'Escape' }))
 
     expect(container1.current).not.toBeVisible()
-    expect(spy1).toHaveBeenCalledTimes(1)
-    expect(spy2).toHaveBeenCalledTimes(0)
+    expect(scheduledCloseTimers(spy1)).toHaveLength(1)
+    expect(cancelledCloseTimers(spy1, spy2)).toHaveLength(0)
     expect(onToggle1).toHaveBeenCalledTimes(2)
     expect(onToggle1).toHaveBeenNthCalledWith(
       1,
@@ -1122,7 +1180,7 @@ test('useTooltip - positioning - position', { timeout: 60_000 }, async () => {
 
   {
     await act(() => focus(trigger1.current))
-    await act(() => vi.runOnlyPendingTimersAsync())
+    await settlePositioning()
 
     expect(tooltip1.position).toBe('above')
     expect(tooltip1.anchor?.props.style).toEqual({})
@@ -1141,7 +1199,7 @@ test('useTooltip - positioning - position', { timeout: 60_000 }, async () => {
 
   {
     await act(() => focus(trigger2.current))
-    await act(() => vi.runOnlyPendingTimersAsync())
+    await settlePositioning()
 
     expect(tooltip1.position).toBe('above')
     expect(tooltip1.anchor?.props.style).toEqual({})
@@ -1167,7 +1225,7 @@ test('useTooltip - positioning - anchor', { timeout: 60_000 }, async () => {
 
   {
     await act(() => focus(trigger1.current))
-    await act(() => vi.runOnlyPendingTimersAsync())
+    await settlePositioning()
 
     expect(tooltip1.position).toBe('above')
     expect(tooltip1.anchor?.props.style).toEqual({})
@@ -1186,7 +1244,7 @@ test('useTooltip - positioning - anchor', { timeout: 60_000 }, async () => {
 
   {
     await act(() => focus(trigger2.current))
-    await act(() => vi.runOnlyPendingTimersAsync())
+    await settlePositioning()
 
     expect(tooltip1.position).toBe('above')
     expect(tooltip1.anchor?.props.style).toEqual({})
