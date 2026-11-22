@@ -51,7 +51,6 @@ export default defineConfig({
         test: {
           name: 'browser',
           include: ['**/*.browser.{test,spec}.tsx'],
-          retry: 1,
           browser: {
             enabled: true,
           },
