@@ -21,7 +21,6 @@ export default defineConfig({
     commonjs(),
     babel({
       babelHelpers: 'bundled',
-      configFile: true,
       extensions: ['.ts', '.tsx'],
     }),
     esbuild(),
