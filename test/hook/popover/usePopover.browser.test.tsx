@@ -1,3 +1,4 @@
+import '#.mock/stableHoverState'
 import {
   Keyboard,
   useKeyboard,

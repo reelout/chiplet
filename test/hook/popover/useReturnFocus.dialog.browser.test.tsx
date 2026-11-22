@@ -1,3 +1,4 @@
+import '#.mock/stableHoverState'
 import { useOverlay, useReturnFocus } from '#hook'
 import { render } from '@testing-library/react'
 import { act, useCallback, useLayoutEffect, useRef, useState } from 'react'
