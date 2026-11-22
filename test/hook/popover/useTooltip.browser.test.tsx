@@ -116,6 +116,8 @@ function cancelledCloseTimers(
 }
 
 async function settlePositioning() {
+  // The real positioning pipeline re-arms fake timers and animation frames
+  // across several rounds before the final position lands; drain generously.
   for (let i = 0; i < 10; i += 1) {
     await act(() => vi.runOnlyPendingTimersAsync())
   }
