@@ -1,3 +1,4 @@
+import '#.mock/blockTrustedPointerEvents'
 import type {
   Overlay,
   OverlayAnchorProps,
@@ -5,10 +6,7 @@ import type {
   TooltipOptions,
 } from '#hook'
 import { useTooltip } from '#hook'
-import {
-  blockTrustedPointerEvents,
-  createKeyboardEvent as createEvent,
-} from '#test'
+import { createKeyboardEvent as createEvent } from '#test'
 import { fireEvent, render, renderHook } from '@testing-library/react'
 import {
   act,
@@ -47,8 +45,6 @@ vi.mock(import('#hook/popover/usePositioning'), async (importOriginal) => {
     }),
   }
 })
-
-blockTrustedPointerEvents()
 
 function toOverlay({
   anchor = <button />,

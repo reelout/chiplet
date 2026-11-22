@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { afterEach, beforeEach } from 'vitest'
 
 const stopTrustedPointerEvent = (ev: Event) => {
@@ -26,16 +27,14 @@ const trustedPointerEventTypes = [
 // `stopImmediatePropagation` keeps the trusted events away from React
 // entirely. Synthetic `fireEvent` events have isTrusted=false and pass
 // through untouched.
-export function blockTrustedPointerEvents() {
-  beforeEach(() => {
-    for (const type of trustedPointerEventTypes) {
-      document.addEventListener(type, stopTrustedPointerEvent, true)
-    }
-  })
+beforeEach(() => {
+  for (const type of trustedPointerEventTypes) {
+    document.addEventListener(type, stopTrustedPointerEvent, true)
+  }
+})
 
-  afterEach(() => {
-    for (const type of trustedPointerEventTypes) {
-      document.removeEventListener(type, stopTrustedPointerEvent, true)
-    }
-  })
-}
+afterEach(() => {
+  for (const type of trustedPointerEventTypes) {
+    document.removeEventListener(type, stopTrustedPointerEvent, true)
+  }
+})

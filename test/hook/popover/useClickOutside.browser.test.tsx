@@ -1,9 +1,7 @@
+import '#.mock/blockTrustedPointerEvents'
 import { useClickOutside } from '#hook'
-import { blockTrustedPointerEvents } from '#test'
 import { renderHook } from '@testing-library/react'
 import { beforeEach, expect, test, vi } from 'vitest'
-
-blockTrustedPointerEvents()
 
 beforeEach(() => {
   vi.restoreAllMocks()

@@ -1,16 +1,14 @@
+import '#.mock/blockTrustedPointerEvents'
 import type { Position, PositioningOptions } from '#hook'
 import { isAnchorPositioningSupported, useAnchorPositioning } from '#hook'
 import {
   PositionOffset,
   positionTryOptionMap,
 } from '#hook/popover/style/positioning.css'
-import { blockTrustedPointerEvents } from '#test'
 import { render } from '@testing-library/react'
 import { act, useCallback, useEffect, useState } from 'react'
 import { assert, beforeEach, expect, test } from 'vitest'
 import { page, server } from 'vitest/browser'
-
-blockTrustedPointerEvents()
 
 let container: HTMLElement | null
 let anchor: HTMLElement | null
