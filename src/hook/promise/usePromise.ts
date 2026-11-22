@@ -17,6 +17,7 @@ export function usePromise<T>(
   initialValue?: T | undefined,
   signal?: AbortSignal | undefined
 ) {
+  'use no memo'
   const [value, setValue] = useState(() => initialValue)
   const [error, setError] = useState<unknown>()
 

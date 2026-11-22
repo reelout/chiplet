@@ -5,6 +5,8 @@ allowBuilds:
 blockExoticSubdeps: true
 
 catalog:
+  '@babel/plugin-syntax-jsx': ^7.29.7
+  '@babel/plugin-syntax-typescript': ^7.29.7
   '@commitlint/cli': ^21.2.4
   '@commitlint/config-conventional': ^21.2.4
   '@csstools/postcss-light-dark-function': ^3.0.9
@@ -68,6 +70,7 @@ catalog:
   jsdom: ^31.0.1
   lint-staged: ^17.6.1
   lodash-es: ^4.18.1
+  oxc-transform-react: ^0.156.0
   playwright: ^1.65.1
   postcss: ^8.5.33
   postcss-styled-syntax: ^0.7.4

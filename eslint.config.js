@@ -88,6 +88,16 @@ export default defineConfig([
   },
 
   reactCompiler.configs.recommended,
+  {
+    files: ['src/hook/promise/usePromise.ts'],
+    rules: {
+      // The compiler silently miscompiles swapped AbortSignals (the effect
+      // memo key narrows to `signal?.aborted`), so the hook carries
+      // `'use no memo'`. The lint rule cannot see the miscompilation and
+      // flags the directive as unused.
+      'react-compiler/react-compiler': 'off',
+    },
+  },
 
   reactRefresh.configs.vite({
     allowConstantExport: true,

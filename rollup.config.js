@@ -19,8 +19,12 @@ export default defineConfig({
   plugins: [
     nodeResolve(),
     commonjs(),
+    babel({
+      babelHelpers: 'bundled',
+      configFile: true,
+      extensions: ['.ts', '.tsx'],
+    }),
     esbuild(),
-    babel({ configFile: true, babelHelpers: 'bundled' }),
     vanillaExtractPlugin({ identifiers: 'short' }),
     svgr({ dimensions: false, exportType: 'named' }),
     nodeExternals(),

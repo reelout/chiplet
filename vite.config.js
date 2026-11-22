@@ -4,7 +4,11 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  plugins: [react(), vanillaExtractPlugin(), svgr({ dimensions: false })],
+  plugins: [
+    react({ compiler: { sources: ['/src/'] } }),
+    vanillaExtractPlugin(),
+    svgr({ dimensions: false }),
+  ],
   optimizeDeps: {
     include: [
       '@vanilla-extract/recipes/createRuntimeFn',

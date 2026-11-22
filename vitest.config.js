@@ -1,12 +1,17 @@
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
 import svgr from '@svgr/rollup'
+import react from '@vitejs/plugin-react'
 import { playwright } from '@vitest/browser-playwright'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-  plugins: [vanillaExtractPlugin(), svgr({ dimensions: false })],
+  plugins: [
+    react({ compiler: { sources: ['/src/'] } }),
+    vanillaExtractPlugin(),
+    svgr({ dimensions: false }),
+  ],
   test: {
     globals: true,
     pool: 'threads',
