@@ -1,4 +1,5 @@
 import { useOverlay, useReturnFocus } from '#hook'
+import { blockTrustedPointerEvents } from '#test'
 import { render } from '@testing-library/react'
 import {
   act,
@@ -12,6 +13,8 @@ import {
 import { renderToString } from 'react-dom/server'
 import { beforeEach, expect, test, vi } from 'vitest'
 import { page, server, userEvent } from 'vitest/browser'
+
+blockTrustedPointerEvents()
 
 let popover1: RefObject<HTMLDivElement | null>
 let popover2: RefObject<HTMLDivElement | null>

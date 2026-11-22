@@ -5,7 +5,10 @@ import {
   type PositioningOptions,
 } from '#hook'
 import { OverlayContext } from '#hook/popover/context'
-import { createKeyboardEvent as createEvent } from '#test'
+import {
+  blockTrustedPointerEvents,
+  createKeyboardEvent as createEvent,
+} from '#test'
 import { fireEvent, render, renderHook } from '@testing-library/react'
 import {
   act,
@@ -17,6 +20,8 @@ import {
 import { createPortal } from 'react-dom'
 import { beforeAll, beforeEach, expect, test, vi, type Mock } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
+
+blockTrustedPointerEvents()
 
 let popover1: ReturnType<typeof usePopover<'div'>>
 let popover2: ReturnType<typeof usePopover<'div'>>

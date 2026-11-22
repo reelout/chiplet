@@ -1,3 +1,4 @@
+export * from './blockTrustedPointerEvents'
 export * from './browser'
 export * from './createElement'
 export * from './createEvent'

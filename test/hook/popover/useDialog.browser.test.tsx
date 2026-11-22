@@ -1,5 +1,6 @@
 import { useDialog, usePopover } from '#hook'
 import { OverlayContext } from '#hook/popover/context'
+import { blockTrustedPointerEvents } from '#test'
 import { render, renderHook } from '@testing-library/react'
 import {
   act,
@@ -11,6 +12,8 @@ import {
 import { createPortal } from 'react-dom'
 import { beforeAll, beforeEach, expect, test, vi, type Mock } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
+
+blockTrustedPointerEvents()
 
 let dialog1: ReturnType<typeof useDialog>
 let dialog2: ReturnType<typeof useDialog>

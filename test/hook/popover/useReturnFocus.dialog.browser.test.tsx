@@ -1,9 +1,12 @@
 import { useOverlay, useReturnFocus } from '#hook'
+import { blockTrustedPointerEvents } from '#test'
 import { render } from '@testing-library/react'
 import { act, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { renderToString } from 'react-dom/server'
 import { beforeEach, expect, test, vi } from 'vitest'
 import { page, server, userEvent } from 'vitest/browser'
+
+blockTrustedPointerEvents()
 
 beforeEach(() => {
   document.body.innerHTML = ''

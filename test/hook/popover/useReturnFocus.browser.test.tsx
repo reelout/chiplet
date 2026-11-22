@@ -1,10 +1,13 @@
 import type { Overlay } from '#hook'
 import { useOverlay, useReturnFocus } from '#hook'
+import { blockTrustedPointerEvents } from '#test'
 import { render, renderHook } from '@testing-library/react'
 import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react'
 import { renderToString } from 'react-dom/server'
 import { assert, beforeEach, expect, test, vi } from 'vitest'
 import { page } from 'vitest/browser'
+
+blockTrustedPointerEvents()
 
 beforeEach(() => {
   document.body.innerHTML = ''

@@ -1,5 +1,6 @@
 import type { Position } from '#hook'
 import { usePositioning, type PositioningOptions } from '#hook'
+import { blockTrustedPointerEvents } from '#test'
 import { autoUpdate, computePosition, flip } from '@floating-ui/dom'
 import { render } from '@testing-library/react'
 import {
@@ -25,6 +26,8 @@ vi.mock(import('react-dom'), async (importActual) => ({
   ...(await importActual()),
   flushSync: act,
 }))
+
+blockTrustedPointerEvents()
 
 const anchorRef = createRef<HTMLElement>()
 const positionedRef = createRef<HTMLElement>()
