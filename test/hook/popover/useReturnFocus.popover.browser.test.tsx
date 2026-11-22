@@ -1,4 +1,4 @@
-import '#.mock/blockTrustedPointerEvents'
+import '#.mock/blockPointerLeaks'
 import { useOverlay, useReturnFocus } from '#hook'
 import { render } from '@testing-library/react'
 import {

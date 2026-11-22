@@ -1,4 +1,4 @@
-import '#.mock/blockTrustedPointerEvents'
+import '#.mock/blockPointerLeaks'
 import { useClickOutside } from '#hook'
 import { renderHook } from '@testing-library/react'
 import { beforeEach, expect, test, vi } from 'vitest'

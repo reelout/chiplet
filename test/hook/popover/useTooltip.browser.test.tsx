@@ -1,4 +1,4 @@
-import '#.mock/blockTrustedPointerEvents'
+import '#.mock/blockPointerLeaks'
 import type {
   Overlay,
   OverlayAnchorProps,

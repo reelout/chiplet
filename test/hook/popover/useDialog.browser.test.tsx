@@ -1,4 +1,4 @@
-import '#.mock/blockTrustedPointerEvents'
+import '#.mock/blockPointerLeaks'
 import { useDialog, usePopover } from '#hook'
 import { OverlayContext } from '#hook/popover/context'
 import { render, renderHook } from '@testing-library/react'

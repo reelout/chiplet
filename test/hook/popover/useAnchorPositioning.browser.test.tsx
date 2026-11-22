@@ -1,4 +1,4 @@
-import '#.mock/blockTrustedPointerEvents'
+import '#.mock/blockPointerLeaks'
 import type { Position, PositioningOptions } from '#hook'
 import { isAnchorPositioningSupported, useAnchorPositioning } from '#hook'
 import {
