@@ -1,4 +1,4 @@
-import '#.mock/blockPointerLeaks'
+import '#.mock/stableHoverState'
 import {
   Keyboard,
   useKeyboard,

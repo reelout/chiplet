@@ -1,4 +1,4 @@
-import '#.mock/blockPointerLeaks'
+import '#.mock/stableHoverState'
 import type { Position } from '#hook'
 import { usePositioning, type PositioningOptions } from '#hook'
 import { autoUpdate, computePosition, flip } from '@floating-ui/dom'
