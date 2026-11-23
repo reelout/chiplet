@@ -15,9 +15,7 @@ import {
   LightColorScheme,
   theme,
   themeClass,
-  tokenClass,
 } from 'chiplet/theme'
-import clsx from 'clsx'
 import { useLayoutEffect, useMemo, type PropsWithChildren } from 'react'
 
 const _autoTheme = {}
@@ -45,7 +43,7 @@ const preview = definePreview({
     docs: {
       codePanel: true,
       container: (props: PropsWithChildren<DocsContainerProps>) => (
-        <div className={clsx(tokenClass, themeClass)}>
+        <div className={themeClass}>
           <DocsContainer {...props} />
         </div>
       ),

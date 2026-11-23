@@ -11,7 +11,6 @@ import {
 } from '@vanilla-extract/css'
 import { generateDeterministicId } from '../util/random/generateDeterministicId'
 import { theme, themeClass } from './theme.css'
-import { tokenClass } from './token.css'
 
 export const radiusVar = createVar()
 
@@ -29,7 +28,6 @@ export const stretch: StyleRule['inlineSize'] = [
 ]
 
 export const GlobalContainerStyle = style([
-  tokenClass,
   themeClass,
   {
     padding: '0',
