@@ -19,9 +19,9 @@ export function usePromise<T>(
 ) {
   // The compiler intentionally narrows an effect's memo key to the property
   // values it reads, so recreating equal-valued objects each render keeps
-  // the cache stable. This hook needs identity semantics instead: when one
-  // un-aborted signal is swapped for another, the effect callback must be
-  // re-derived or the new 'abort()' stays unobserved. Opting out is
+  // the cache stable. This hook needs identity semantics instead: when the
+  // signal is swapped for another un-aborted signal, the effect callback
+  // must be re-derived or the new 'abort()' stays unobserved. Opting out is
   // deliberate — the lint rule reports opt-outs it cannot prove necessary.
   // eslint-disable-next-line react-compiler/react-compiler
   'use no memo'
