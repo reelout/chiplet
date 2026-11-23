@@ -5,6 +5,7 @@ allowBuilds:
 blockExoticSubdeps: true
 
 catalog:
+  '@babel/plugin-syntax-jsx': ^7.29.7
   '@babel/plugin-syntax-typescript': ^7.29.7
   '@commitlint/cli': ^21.2.4
   '@commitlint/config-conventional': ^21.2.4

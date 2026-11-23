@@ -83,6 +83,7 @@
     "tiny-invariant": "catalog:"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-jsx": "catalog:",
     "@babel/plugin-syntax-typescript": "catalog:",
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",
