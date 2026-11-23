@@ -49,9 +49,6 @@ export function usePromise<T>(
     return () => {
       destroyed = true
     }
-    // Depend on the signal instance, not its 'aborted' state, so the effect
-    // re-runs and the callbacks close over the latest signal when it is
-    // swapped between renders.
   }, [promise, signal])
 
   useEffect(() => {
