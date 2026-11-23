@@ -17,19 +17,20 @@ export function usePromise<T>(
   initialValue?: T | undefined,
   signal?: AbortSignal | undefined
 ) {
-  // The compiler intentionally narrows an effect's memo key to the property
-  // values it reads, so recreating equal-valued objects each render keeps
-  // the cache stable. This hook needs identity semantics instead: when the
-  // signal is swapped for another un-aborted signal, the effect callback
-  // must be re-derived or the new 'abort()' stays unobserved. Opting out is
-  // deliberate — the lint rule reports opt-outs it cannot prove necessary.
-  // eslint-disable-next-line react-compiler/react-compiler
-  'use no memo'
   const [value, setValue] = useState(() => initialValue)
   const [error, setError] = useState<unknown>()
 
   useEffect(() => {
-    if (signal?.aborted) {
+    // Both the deps array and the compiler's memo key track the signal
+    // instance, not its 'aborted' state: the deps re-run the effect when
+    // the signal is swapped between renders, and copying the signal to a
+    // local keeps the memo key identity-based — reading 'signal?.aborted'
+    // directly would narrow the key to that boolean, so a swapped-in,
+    // un-aborted signal would re-run the effect with a stale callback
+    // closing over the old signal.
+    const _signal = signal
+
+    if (_signal?.aborted) {
       return
     }
 
@@ -37,13 +38,13 @@ export function usePromise<T>(
 
     promise
       .then((value) => {
-        if (!destroyed && !signal?.aborted) {
+        if (!destroyed && !_signal?.aborted) {
           setValue(() => value)
           setError(() => undefined)
         }
       })
       .catch((error) => {
-        if (!destroyed && !signal?.aborted) {
+        if (!destroyed && !_signal?.aborted) {
           setError(() => error)
         }
       })
@@ -51,9 +52,6 @@ export function usePromise<T>(
     return () => {
       destroyed = true
     }
-    // Depend on the signal instance, not its 'aborted' state, so the effect
-    // re-runs and the callbacks close over the latest signal when it is
-    // swapped between renders.
   }, [promise, signal])
 
   useEffect(() => {
