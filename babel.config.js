@@ -3,7 +3,7 @@
  */
 export default {
   plugins: [
-    'babel-plugin-react-compiler',
     ['@babel/plugin-syntax-typescript', { isTSX: true }],
+    'babel-plugin-react-compiler',
   ],
 }
