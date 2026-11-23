@@ -173,9 +173,6 @@ settings:
 
 catalogs:
   default:
-    '@babel/plugin-syntax-jsx':
-      specifier: ^7.29.7
-      version: 7.29.7
     '@babel/plugin-syntax-typescript':
       specifier: ^7.29.7
       version: 7.29.7
@@ -533,9 +530,6 @@ importers:
         specifier: 'catalog:'
         version: 1.3.3
     devDependencies:
-      '@babel/plugin-syntax-jsx':
-        specifier: 'catalog:'
-        version: 7.29.7(@babel/core@7.29.13(supports-color@7.2.0))
       '@babel/plugin-syntax-typescript':
         specifier: 'catalog:'
         version: 7.29.7(@babel/core@7.29.13(supports-color@7.2.0))
