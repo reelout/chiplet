@@ -17,6 +17,9 @@ export function usePromise<T>(
   initialValue?: T | undefined,
   signal?: AbortSignal | undefined
 ) {
+  // The compiler silently miscompiles swapped AbortSignals, which the lint
+  // rule cannot see.
+  // eslint-disable-next-line react-compiler/react-compiler
   'use no memo'
   const [value, setValue] = useState(() => initialValue)
   const [error, setError] = useState<unknown>()
