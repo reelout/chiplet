@@ -17,19 +17,17 @@ export function usePromise<T>(
   initialValue?: T | undefined,
   signal?: AbortSignal | undefined
 ) {
-  // The compiler intentionally narrows an effect's memo key to the property
-  // values it reads, so recreating equal-valued objects each render keeps
-  // the cache stable. This hook needs identity semantics instead: when the
-  // signal is swapped for another un-aborted signal, the effect callback
-  // must be re-derived or the new 'abort()' stays unobserved. Opting out is
-  // deliberate — the lint rule reports opt-outs it cannot prove necessary.
-  // eslint-disable-next-line react-compiler/react-compiler
-  'use no memo'
   const [value, setValue] = useState(() => initialValue)
   const [error, setError] = useState<unknown>()
 
   useEffect(() => {
-    if (signal?.aborted) {
+    // Copying the signal to a local keeps the compiler's memo key on the
+    // signal instance. Reading 'signal?.aborted' directly would narrow the
+    // key to that value, so a swapped-in, un-aborted signal would re-run
+    // this effect with a stale callback closing over the old signal.
+    const _signal = signal
+
+    if (_signal?.aborted) {
       return
     }
 
@@ -37,13 +35,13 @@ export function usePromise<T>(
 
     promise
       .then((value) => {
-        if (!destroyed && !signal?.aborted) {
+        if (!destroyed && !_signal?.aborted) {
           setValue(() => value)
           setError(() => undefined)
         }
       })
       .catch((error) => {
-        if (!destroyed && !signal?.aborted) {
+        if (!destroyed && !_signal?.aborted) {
           setError(() => error)
         }
       })
