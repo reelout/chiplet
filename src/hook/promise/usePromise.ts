@@ -22,12 +22,12 @@ export function usePromise<T>(
 
   useEffect(() => {
     // Both the deps array and the compiler's memo key track the signal
-    // instance, not its 'aborted' state: the deps re-run the effect with
-    // fresh callbacks when the signal is swapped between renders, and
-    // copying the signal to a local keeps the memo key identity-based —
-    // reading 'signal?.aborted' directly would narrow the key to that
-    // value, so a swapped-in, un-aborted signal would re-run the effect
-    // with a stale callback closing over the old signal.
+    // instance, not its 'aborted' state: the deps re-run the effect when
+    // the signal is swapped between renders, and copying the signal to a
+    // local keeps the memo key identity-based — reading 'signal?.aborted'
+    // directly would narrow the key to that boolean, so a swapped-in,
+    // un-aborted signal would re-run the effect with a stale callback
+    // closing over the old signal.
     const _signal = signal
 
     if (_signal?.aborted) {
