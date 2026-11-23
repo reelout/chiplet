@@ -17,6 +17,12 @@ export function usePromise<T>(
   initialValue?: T | undefined,
   signal?: AbortSignal | undefined
 ) {
+  // The compiler memoizes this effect against 'signal?.aborted' rather
+  // than the signal instance, so a swapped-in, un-aborted signal re-runs
+  // the stale callback (still closing over the old signal) and the new
+  // 'abort()' is ignored — a miscompilation the lint rule cannot see.
+  // eslint-disable-next-line react-compiler/react-compiler
+  'use no memo'
   const [value, setValue] = useState(() => initialValue)
   const [error, setError] = useState<unknown>()
 

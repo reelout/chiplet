@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Chiplet is an ESM-only library of React components, hooks, and utilities. It uses React 19, strict TypeScript, Vanilla Extract, Tailwind CSS v4, Vite/Rollup, and Storybook 10.
+Chiplet is an ESM-only library of React components, hooks, and utilities. It uses React 19, the React Compiler, strict TypeScript, Vanilla Extract, Tailwind CSS v4, Vite/Rollup, and Storybook 10.
 
 - `src/` contains the library, organized into `component/`, `hook/`, `infra/`, `theme/`, and `util/`. `src/index.ts` re-exports the public API.
 - `test/` mirrors `src/` and contains tests, Storybook stories, and MDX documentation.
@@ -47,6 +47,7 @@ Select a project with `--project=`, for example `pnpm test run --project=browser
 - Use Node.js `>=24.15`. Define shared dependency versions in the `pnpm-workspace.yaml` catalog and reference them as `catalog:` in package manifests.
 - Use `#component`, `#hook`, `#infra`, `#theme`, and `#util` for public module barrels; use `#*` for source files, `#test` for shared test helpers, and `#.mock/*` for test mocks. These aliases are defined in `package.json`.
 - Import within a module family by direct relative path (`'../react/useConst'`); use a family's public barrel or `#`-alias only from other families. Own-family imports through `'.'`, `'..'`, or `'#hook/...'` inside `src/hook` create the circular dependencies Rollup reports. Vanilla-extract-compiled `*.css.ts` files cannot resolve `#*` subpath aliases (exact aliases such as `#util` still resolve); import modules the exact aliases do not export from them by relative path.
+- The React Compiler runs over `src/` in every pipeline: Rollup compiles through babel before esbuild; Vite and Vitest compile through the Rust compiler in `@vitejs/plugin-react`. Only `src/` compiles — tests, stories, and the test harness stay uncompiled. Opt a function out with a `'use no memo'` directive, and quiet the lint rule with an inline `eslint-disable-next-line` at the directive, because it reports opt-outs it cannot prove necessary.
 - Keep Husky checks enabled. lint-staged runs before commits, and commitlint checks commit messages.
 - Use Conventional Commit messages with a module scope. In the description, single-quote module, hook, or component names.
 - Protect secrets, preserve repository hooks, and avoid force-pushing or bypassing lint and tests.
