@@ -29,7 +29,10 @@ export function Portal(props: PortalProps) {
     scope === null ? (
       props.children
     ) : (
-      <div className={scope.className} style={{ display: 'contents' }}>
+      <div
+        className={scope.className}
+        style={{ display: 'contents', ...scope.declarations }}
+      >
         {props.children}
       </div>
     ),

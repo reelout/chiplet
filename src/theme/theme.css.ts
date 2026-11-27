@@ -1,100 +1,99 @@
 import { entries } from '#util'
 import { createTheme } from '@vanilla-extract/css'
-import { palette as _palette, opacity } from './palette'
-import { token } from './token.css'
-import { typography as _typography } from './typography'
+import { opacity } from './primitive/palette'
+import { semantic } from './semantic.css'
 
 const palette = {
-  primary: `light-dark(${token.palette.primary5}, ${token.palette.primary2})`,
-  primaryHover: `light-dark(${token.palette.primary4}, ${token.palette.primary1})`,
-  primaryActive: `light-dark(${token.palette.primary6}, ${token.palette.primary3})`,
-  secondary: `light-dark(${token.palette.secondary1}, ${token.palette.secondary6})`,
-  secondaryHover: `light-dark(${token.palette.secondary2}, ${token.palette.secondary5})`,
-  secondaryActive: `light-dark(${token.palette.secondary3}, ${token.palette.secondary4})`,
+  primary: `light-dark(${semantic.palette.primary5}, ${semantic.palette.primary2})`,
+  primaryHover: `light-dark(${semantic.palette.primary4}, ${semantic.palette.primary1})`,
+  primaryActive: `light-dark(${semantic.palette.primary6}, ${semantic.palette.primary3})`,
+  secondary: `light-dark(${semantic.palette.secondary1}, ${semantic.palette.secondary6})`,
+  secondaryHover: `light-dark(${semantic.palette.secondary2}, ${semantic.palette.secondary5})`,
+  secondaryActive: `light-dark(${semantic.palette.secondary3}, ${semantic.palette.secondary4})`,
   accent: {
-    red: `light-dark(${token.palette.accentRed4}, ${token.palette.accentRed5})`,
-    redHover: `light-dark(${token.palette.accentRed3}, ${token.palette.accentRed4})`,
-    redActive: `light-dark(${token.palette.accentRed5}, ${token.palette.accentRed6})`,
-    redForeground: `light-dark(${token.palette.accentRed4}, ${token.palette.accentRed3})`,
-    orange: `light-dark(${token.palette.accentOrange4}, ${token.palette.accentOrange5})`,
-    orangeHover: `light-dark(${token.palette.accentOrange3}, ${token.palette.accentOrange4})`,
-    orangeActive: `light-dark(${token.palette.accentOrange5}, ${token.palette.accentOrange6})`,
-    orangeForeground: `light-dark(${token.palette.accentOrange7}, ${token.palette.accentOrange5})`,
-    yellow: `light-dark(${token.palette.accentYellow2}, ${token.palette.accentYellow3})`,
-    yellowHover: `light-dark(${token.palette.accentYellow1}, ${token.palette.accentYellow2})`,
-    yellowActive: `light-dark(${token.palette.accentYellow3}, ${token.palette.accentYellow4})`,
-    yellowForeground: `light-dark(${token.palette.accentYellow7}, ${token.palette.accentYellow3})`,
-    green: `light-dark(${token.palette.accentGreen3}, ${token.palette.accentGreen4})`,
-    greenHover: `light-dark(${token.palette.accentGreen2}, ${token.palette.accentGreen3})`,
-    greenActive: `light-dark(${token.palette.accentGreen4}, ${token.palette.accentGreen5})`,
-    greenForeground: `light-dark(${token.palette.accentGreen7}, ${token.palette.accentGreen4})`,
-    blue: `light-dark(${token.palette.accentBlue4}, ${token.palette.accentBlue5})`,
-    blueHover: `light-dark(${token.palette.accentBlue3}, ${token.palette.accentBlue4})`,
-    blueActive: `light-dark(${token.palette.accentBlue5}, ${token.palette.accentBlue6})`,
-    blueForeground: `light-dark(${token.palette.accentBlue4}, ${token.palette.accentBlue3})`,
+    red: `light-dark(${semantic.palette.accentRed4}, ${semantic.palette.accentRed5})`,
+    redHover: `light-dark(${semantic.palette.accentRed3}, ${semantic.palette.accentRed4})`,
+    redActive: `light-dark(${semantic.palette.accentRed5}, ${semantic.palette.accentRed6})`,
+    redForeground: `light-dark(${semantic.palette.accentRed4}, ${semantic.palette.accentRed3})`,
+    orange: `light-dark(${semantic.palette.accentOrange4}, ${semantic.palette.accentOrange5})`,
+    orangeHover: `light-dark(${semantic.palette.accentOrange3}, ${semantic.palette.accentOrange4})`,
+    orangeActive: `light-dark(${semantic.palette.accentOrange5}, ${semantic.palette.accentOrange6})`,
+    orangeForeground: `light-dark(${semantic.palette.accentOrange7}, ${semantic.palette.accentOrange5})`,
+    yellow: `light-dark(${semantic.palette.accentYellow2}, ${semantic.palette.accentYellow3})`,
+    yellowHover: `light-dark(${semantic.palette.accentYellow1}, ${semantic.palette.accentYellow2})`,
+    yellowActive: `light-dark(${semantic.palette.accentYellow3}, ${semantic.palette.accentYellow4})`,
+    yellowForeground: `light-dark(${semantic.palette.accentYellow7}, ${semantic.palette.accentYellow3})`,
+    green: `light-dark(${semantic.palette.accentGreen3}, ${semantic.palette.accentGreen4})`,
+    greenHover: `light-dark(${semantic.palette.accentGreen2}, ${semantic.palette.accentGreen3})`,
+    greenActive: `light-dark(${semantic.palette.accentGreen4}, ${semantic.palette.accentGreen5})`,
+    greenForeground: `light-dark(${semantic.palette.accentGreen7}, ${semantic.palette.accentGreen4})`,
+    blue: `light-dark(${semantic.palette.accentBlue4}, ${semantic.palette.accentBlue5})`,
+    blueHover: `light-dark(${semantic.palette.accentBlue3}, ${semantic.palette.accentBlue4})`,
+    blueActive: `light-dark(${semantic.palette.accentBlue5}, ${semantic.palette.accentBlue6})`,
+    blueForeground: `light-dark(${semantic.palette.accentBlue4}, ${semantic.palette.accentBlue3})`,
   },
   semantic: {
-    error: `light-dark(${token.palette.semanticError1}, ${token.palette.semanticError2})`,
-    warning: `light-dark(${token.palette.semanticWarning1}, ${token.palette.semanticWarning2})`,
-    success: `light-dark(${token.palette.semanticSuccess1}, ${token.palette.semanticSuccess2})`,
-    info: `light-dark(${token.palette.semanticInfo1}, ${token.palette.semanticInfo2})`,
+    error: `light-dark(${semantic.palette.semanticError1}, ${semantic.palette.semanticError2})`,
+    warning: `light-dark(${semantic.palette.semanticWarning1}, ${semantic.palette.semanticWarning2})`,
+    success: `light-dark(${semantic.palette.semanticSuccess1}, ${semantic.palette.semanticSuccess2})`,
+    info: `light-dark(${semantic.palette.semanticInfo1}, ${semantic.palette.semanticInfo2})`,
   },
   neutral: {
-    foreground1: `light-dark(${token.palette.black}, ${token.palette.white})`,
-    foreground2: `light-dark(${token.palette.neutral16}, ${token.palette.neutral2})`,
-    foreground3: `light-dark(${token.palette.neutral13}, ${token.palette.neutral7})`,
-    foreground4: `light-dark(${token.palette.neutral11}, ${token.palette.neutral10})`,
-    foreground6: `light-dark(${token.palette.neutral10}, ${token.palette.neutral11})`,
-    foreground7: `light-dark(${token.palette.neutral7}, ${token.palette.neutral13})`,
-    foreground8: `light-dark(${token.palette.neutral2}, ${token.palette.neutral16})`,
-    foreground9: `light-dark(${token.palette.white}, ${token.palette.black})`,
-    light: token.palette.neutral1,
-    dark: token.palette.neutral16,
-    white: token.palette.white,
-    black: token.palette.black,
-    transparent: token.palette.transparent,
+    foreground1: `light-dark(${semantic.palette.black}, ${semantic.palette.white})`,
+    foreground2: `light-dark(${semantic.palette.neutral16}, ${semantic.palette.neutral2})`,
+    foreground3: `light-dark(${semantic.palette.neutral13}, ${semantic.palette.neutral7})`,
+    foreground4: `light-dark(${semantic.palette.neutral11}, ${semantic.palette.neutral10})`,
+    foreground6: `light-dark(${semantic.palette.neutral10}, ${semantic.palette.neutral11})`,
+    foreground7: `light-dark(${semantic.palette.neutral7}, ${semantic.palette.neutral13})`,
+    foreground8: `light-dark(${semantic.palette.neutral2}, ${semantic.palette.neutral16})`,
+    foreground9: `light-dark(${semantic.palette.white}, ${semantic.palette.black})`,
+    light: semantic.palette.neutral1,
+    dark: semantic.palette.neutral16,
+    white: semantic.palette.white,
+    black: semantic.palette.black,
+    transparent: semantic.palette.transparent,
   },
   adaptive: {
-    background1: `light-dark(${token.palette.background5}, ${token.palette.background1})`,
-    background2: `light-dark(${token.palette.background6}, ${token.palette.background2})`,
-    background3: `light-dark(${token.palette.background7}, ${token.palette.background3})`,
-    background4: `light-dark(${token.palette.background8}, ${token.palette.background4})`,
-    border1: `light-dark(${token.palette.border4}, ${token.palette.border1})`,
-    border2: `light-dark(${token.palette.border5}, ${token.palette.border2})`,
-    border3: `light-dark(${token.palette.border6}, ${token.palette.border3})`,
-    shadow1: `light-dark(${token.palette.shadow4}, ${token.palette.shadow1})`,
-    shadow2: `light-dark(${token.palette.shadow5}, ${token.palette.shadow2})`,
-    shadow3: `light-dark(${token.palette.shadow6}, ${token.palette.shadow3})`,
-    overlay: `light-dark(${token.palette.overlay2}, ${token.palette.overlay1})`,
+    background1: `light-dark(${semantic.palette.background5}, ${semantic.palette.background1})`,
+    background2: `light-dark(${semantic.palette.background6}, ${semantic.palette.background2})`,
+    background3: `light-dark(${semantic.palette.background7}, ${semantic.palette.background3})`,
+    background4: `light-dark(${semantic.palette.background8}, ${semantic.palette.background4})`,
+    border1: `light-dark(${semantic.palette.border4}, ${semantic.palette.border1})`,
+    border2: `light-dark(${semantic.palette.border5}, ${semantic.palette.border2})`,
+    border3: `light-dark(${semantic.palette.border6}, ${semantic.palette.border3})`,
+    shadow1: `light-dark(${semantic.palette.shadow4}, ${semantic.palette.shadow1})`,
+    shadow2: `light-dark(${semantic.palette.shadow5}, ${semantic.palette.shadow2})`,
+    shadow3: `light-dark(${semantic.palette.shadow6}, ${semantic.palette.shadow3})`,
+    overlay: `light-dark(${semantic.palette.overlay2}, ${semantic.palette.overlay1})`,
   },
 } as const
 
-const gap = token.spacing.gap.medium
-const padding = token.spacing.padding.medium
+const gap = semantic.spacing.gap.medium
+const padding = semantic.spacing.padding.medium
 const color = palette.neutral.foreground2
 const colorInverted = palette.neutral.foreground8
 const transparent = palette.neutral.transparent
-const outline = `${token.sizing.outline.medium} solid ${palette.accent.blue}`
-const background = `light-dark(${token.palette.neutral1}, ${token.palette.neutral16})`
+const outline = `${semantic.sizing.outline.medium} solid ${palette.accent.blue}`
+const background = `light-dark(${semantic.palette.neutral1}, ${semantic.palette.neutral16})`
 const backgroundHover = palette.adaptive.background1
 const backgroundActive = palette.adaptive.background2
-const backgroundInverted = `light-dark(${token.palette.neutral16}, ${token.palette.neutral1})`
-const border = `${token.sizing.border.small} solid ${palette.adaptive.border1}`
-const radius = token.sizing.radius.medium
-const shadow1 = `${token.sizing.shadow.small} ${palette.adaptive.shadow1}`
-const shadow4 = `${token.sizing.shadow.medium} ${palette.adaptive.shadow1}`
-const shadow7 = `${token.sizing.shadow.large} ${palette.adaptive.shadow1}`
+const backgroundInverted = `light-dark(${semantic.palette.neutral16}, ${semantic.palette.neutral1})`
+const border = `${semantic.sizing.border.small} solid ${palette.adaptive.border1}`
+const radius = semantic.sizing.radius.medium
+const shadow1 = `${semantic.sizing.shadow.small} ${palette.adaptive.shadow1}`
+const shadow4 = `${semantic.sizing.shadow.medium} ${palette.adaptive.shadow1}`
+const shadow7 = `${semantic.sizing.shadow.large} ${palette.adaptive.shadow1}`
 const filter = {
   blur: 'blur(5px)',
   shadow: `drop-shadow(0.125rem 0.125rem 0 ${palette.adaptive.shadow3})`,
 }
-const transition = token.transition.default
-const typography = entries(token.typography).reduce(
+const transition = semantic.transition.default
+const typography = entries(semantic.typography).reduce(
   (acc, [name, font]) => ({
     ...acc,
     [name]: `${font.fontStyle} ${font.fontVariant} ${font.fontWeight} ${font.fontSize}/${font.lineHeight} ${font.fontFamily}`,
   }),
-  {} as { [K in keyof typeof token.typography]: string }
+  {} as { [K in keyof typeof semantic.typography]: string }
 )
 
 /**
@@ -105,7 +104,7 @@ export const [themeClass, theme] = createTheme({
 
   gap,
   padding,
-  margin: token.spacing.margin,
+  margin: semantic.spacing.margin,
   color,
   outline,
   background,
@@ -116,7 +115,7 @@ export const [themeClass, theme] = createTheme({
   transition,
 
   paper: {
-    background: `light-dark(${token.palette.neutral2}, ${token.palette.neutral17})`,
+    background: `light-dark(${semantic.palette.neutral2}, ${semantic.palette.neutral17})`,
   },
 
   hover: {
@@ -128,9 +127,9 @@ export const [themeClass, theme] = createTheme({
   },
 
   disabled: {
-    color: `light-dark(${token.palette.neutral7}, ${token.palette.neutral13})`,
-    background: `light-dark(${token.palette.background5}, ${token.palette.background1})`,
-    border: `light-dark(${token.palette.border4}, ${token.palette.border1})`,
+    color: `light-dark(${semantic.palette.neutral7}, ${semantic.palette.neutral13})`,
+    background: `light-dark(${semantic.palette.background5}, ${semantic.palette.background1})`,
+    border: `light-dark(${semantic.palette.border4}, ${semantic.palette.border1})`,
   },
 
   descriptive: {
@@ -147,29 +146,29 @@ export const [themeClass, theme] = createTheme({
   },
 
   highlight: {
-    background: `light-dark(${opacity(token.palette.accentYellow2, 30)}, ${opacity(token.palette.accentYellow3, 40)})`,
+    background: `light-dark(${opacity(semantic.palette.accentYellow2, 30)}, ${opacity(semantic.palette.accentYellow3, 40)})`,
   },
 
   selection: {
-    background: `light-dark(${opacity(token.palette.accentBlue2, 40)}, ${opacity(token.palette.accentBlue3, 50)})`,
+    background: `light-dark(${opacity(semantic.palette.accentBlue2, 40)}, ${opacity(semantic.palette.accentBlue3, 50)})`,
   },
 
   button: {
     gap,
-    minWidth: token.typography.heading1.lineHeight,
-    height: token.sizing.height,
-    padding: token.spacing.padding,
+    minWidth: semantic.typography.heading1.lineHeight,
+    height: semantic.sizing.height,
+    padding: semantic.spacing.padding,
     font: {
       small: typography.button3,
       medium: typography.button2,
       large: typography.button1,
     },
-    outline: token.sizing.outline.medium,
+    outline: semantic.sizing.outline.medium,
     background: transparent,
     backgroundHover,
     backgroundActive,
-    border: token.sizing.border,
-    radius: token.sizing.radius,
+    border: semantic.sizing.border,
+    radius: semantic.sizing.radius,
     shadow: shadow1,
     transition,
     default: {
@@ -226,8 +225,8 @@ export const [themeClass, theme] = createTheme({
 
   input: {
     gap,
-    height: token.sizing.height,
-    padding: token.spacing.padding,
+    height: semantic.sizing.height,
+    padding: semantic.spacing.padding,
     font: {
       small: typography.body3,
       medium: typography.body2,
@@ -237,8 +236,8 @@ export const [themeClass, theme] = createTheme({
     placeholder: palette.neutral.foreground3,
     before: palette.neutral.foreground3,
     after: palette.neutral.foreground3,
-    border: token.sizing.border,
-    radius: token.sizing.radius,
+    border: semantic.sizing.border,
+    radius: semantic.sizing.radius,
     primary: {
       background: transparent,
       backgroundHover: transparent,
@@ -259,25 +258,25 @@ export const [themeClass, theme] = createTheme({
 
   checkbox: {
     outset: gap,
-    size: token.sizing.width,
+    size: semantic.sizing.width,
     color: palette.neutral.foreground4,
     colorHover: palette.neutral.foreground1,
     colorActive: palette.neutral.foreground4,
     colorChecked: palette.accent.blue,
     colorCheckedHover: palette.accent.blueHover,
     colorCheckedActive: palette.accent.blueActive,
-    outline: token.sizing.outline.medium,
+    outline: semantic.sizing.outline.medium,
     transition,
   },
 
   switch: {
     outset: gap,
-    width: token.sizing.height,
-    height: token.sizing.width,
+    width: semantic.sizing.height,
+    height: semantic.sizing.width,
     padding: { small: '0.125rem', medium: '0.125rem', large: '0.125rem' },
     color: palette.neutral.light,
     colorChecked: palette.neutral.light,
-    outline: token.sizing.outline.medium,
+    outline: semantic.sizing.outline.medium,
     background: palette.adaptive.background4,
     backgroundChecked: palette.accent.blue,
     transition,
@@ -291,18 +290,18 @@ export const [themeClass, theme] = createTheme({
   },
 
   icon: {
-    size: token.sizing.width,
+    size: semantic.sizing.width,
   },
 
   spinner: {
-    size: token.sizing.width,
+    size: semantic.sizing.width,
     color: palette.accent.blue,
     duration: '2000ms',
   },
 
   dialog: {
     size: { small: '15rem', medium: '30rem', large: '45rem' },
-    margin: token.spacing.margin.large,
+    margin: semantic.spacing.margin.large,
     color,
     background,
     radius,
@@ -318,12 +317,12 @@ export const [themeClass, theme] = createTheme({
     border,
     radius,
     shadow: shadow4,
-    transition: token.transition.slowest,
+    transition: semantic.transition.slowest,
   },
 
   tooltip: {
-    minHeight: token.sizing.height.medium,
-    padding: token.spacing.padding.small,
+    minHeight: semantic.sizing.height.medium,
+    padding: semantic.spacing.padding.small,
     color: colorInverted,
     background: backgroundInverted,
     border: 'none',
@@ -337,25 +336,25 @@ export const [themeClass, theme] = createTheme({
 
   menu: {
     width: '12.5rem',
-    padding: token.spacing.padding.small,
+    padding: semantic.spacing.padding.small,
   },
 
   item: {
-    gap: token.spacing.gap.small,
-    height: token.sizing.height.small,
-    padding: token.spacing.padding.medium,
+    gap: semantic.spacing.gap.small,
+    height: semantic.sizing.height.small,
+    padding: semantic.spacing.padding.medium,
     radius,
-    icon: token.sizing.width.small,
+    icon: semantic.sizing.width.small,
   },
 
   group: {
-    gap: token.spacing.gap.small,
+    gap: semantic.spacing.gap.small,
     font: typography.caption2,
     color: palette.neutral.foreground4,
   },
 
   separator: {
-    size: token.sizing.border.small,
+    size: semantic.sizing.border.small,
     color: palette.adaptive.border1,
   },
 } as const)

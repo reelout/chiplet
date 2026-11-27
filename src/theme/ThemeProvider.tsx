@@ -7,13 +7,15 @@ import {
   GlobalContainerStyle,
   LightColorScheme,
 } from './global.css'
+import type { Theme } from './theme.css'
 
 export interface ThemeProviderProps extends React.PropsWithChildren {
   colorScheme?: ColorScheme | undefined
+  theme?: Theme | undefined
 }
 
 export function ThemeProvider(props: ThemeProviderProps) {
-  const { colorScheme = 'auto', children } = props
+  const { colorScheme = 'auto', theme = {}, children } = props
 
   const className = clsx(
     GlobalContainerStyle,
@@ -22,5 +24,9 @@ export function ThemeProvider(props: ThemeProviderProps) {
     colorScheme === 'dark light' && DarkLightColorScheme
   )
 
-  return <ThemeContext value={{ className }}>{children}</ThemeContext>
+  return (
+    <ThemeContext value={{ className, declarations: theme }}>
+      {children}
+    </ThemeContext>
+  )
 }

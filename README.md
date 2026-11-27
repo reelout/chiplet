@@ -12,7 +12,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-blue?style=flat-square&logo=typescript&logoColor=white)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Documentation](#documentation) • [Contributing](#contributing)
+[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Theming](#theming) • [Documentation](#documentation) • [Contributing](#contributing)
 
 </div>
 
@@ -24,7 +24,7 @@ Chiplet is an ESM library of React components, hooks, utilities, and theming too
 ## Features
 
 - **Accessible components** with interaction support such as keyboard navigation, focus handling, and dismissal where appropriate.
-- **Theme tokens** exposed as CSS custom properties, with light and dark color-scheme support.
+- **Theme tokens** exposed as CSS custom properties, customizable through a partial `theme` object, with light and dark color-scheme support.
 - **TypeScript declarations** included in the package.
 
 ## Installation
@@ -60,6 +60,36 @@ function App() {
 ```
 
 `GlobalContainerStyle` applies Chiplet's design tokens and base styles to the element; its CSS custom properties are inherited by descendants. `ColorScheme` tells the browser that both light and dark color schemes are supported, allowing it to choose the appropriate native colors. You can also import these exports from `chiplet`.
+
+## Theming
+
+Wrap your app in `ThemeProvider` and pass a partial `theme` object to restyle any token. The reserved keys `palette`, `size`, `space`, `motion`, and `typography` override the raw primitives and re-derive every dependent role; all other keys target semantic roles directly:
+
+```jsx
+import { Button, Spinner } from 'chiplet/component'
+import { ThemeProvider } from 'chiplet/theme'
+
+function App() {
+  return (
+    <ThemeProvider
+      colorScheme='auto'
+      theme={{
+        // A role remap: links, buttons, checkboxes, and spinners follow.
+        accent: { blue: 'oklch(0.62 0.19 255)' },
+        // A primitive override: every transition re-derives.
+        motion: { duration: { default: '80ms' } },
+      }}
+    >
+      <Button color='primary' variant='primary'>
+        Get started
+      </Button>
+      <Spinner aria-label='Loading' />
+    </ThemeProvider>
+  )
+}
+```
+
+`ThemeProvider` renders a host element that carries the preset styles, the color scheme, and your compiled customization. Nested providers, portaled overlays, server-side rendering, and the advanced `compileCustomTheme` path are covered in the [customization guide](https://chiplet.overview.vercel.app/?path=/docs/theme-customization--docs).
 
 ## Documentation
 
